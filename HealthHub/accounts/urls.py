@@ -19,8 +19,13 @@ j_member_detail = JMemberViewSet.as_view({
     'delete': 'destroy'
 })
 
+j_member_search_by_nickname = JMemberViewSet.as_view({
+    'get': 'retrieve',
+})
+
 
 urlpatterns =[
     path('', member_list),
     path('<int:pk>', j_member_detail),
+    path('checkNickName/<str:nickname>', j_member_search_by_nickname)
 ]

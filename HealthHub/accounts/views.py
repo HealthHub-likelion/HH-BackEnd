@@ -9,5 +9,6 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     
 class JMemberViewSet(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
+    lookup_field = 'nickname'
+    queryset = Member.objects.filter(nickname = lookup_field)
     serializer_class = MemberSerializer
