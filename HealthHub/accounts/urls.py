@@ -20,7 +20,7 @@ j_member_detail = JMemberViewSet.as_view({
 })
 
 j_member_search_by_nickname = JMemberViewSet.as_view({
-    'get': 'retrieve',
+    'post': 'search_nickname',
 })
 
 member_check = MemberCheckViewSet.as_view({
@@ -31,6 +31,6 @@ member_check = MemberCheckViewSet.as_view({
 urlpatterns =[
     path('', member_list),
     path('<int:pk>', j_member_detail),
-    path('checkNickName/<str:nickname>', j_member_search_by_nickname),
-    path('member/',member_check)
+    path('checkNickname/<nickname>', j_member_search_by_nickname),
+    path('member/', member_check)
 ]

@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from .models import Member
-from .serializers import MemberSerializer, MemberCheckSerializer
+from .serializers import MemberSerializer, MemberCheckSerializer, MemberSearchByNickname
 from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.response import Response
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -9,9 +11,27 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     
 class JMemberViewSet(viewsets.ModelViewSet):
-    lookup_field = 'nickname'
-    queryset = Member.objects.filter(nickname = lookup_field)
-    serializer_class = MemberSerializer
+    queryset = Member.objects.all()
+    serializer_class = MemberSearchByNickname
+    
+    def search_nickname(self, request):
+        print("\n\n\n", request.data, "\n\n\n")
+        
+        searched_member = Member.objects.get(nickname=request.data['nickname'])
+        print(searched_member)
+        
+        if('nickname' in request.data):
+            if(searched_member != None ):
+                nickname = searched_member.get('nickname')
+                img_path = searched_member.get('img')
+                return Response({'Member':{
+                    'name' : nickname,
+                    'img' : img_path
+                    }},status=status.HTTP_200_OK)
+        else:
+            return Response({'response':'유효하지 않은 인자가 요청되었습니다.'},status = status.HTTP_400_BAD_REQUEST)
+    
+    
     
 class MemberCheckViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
