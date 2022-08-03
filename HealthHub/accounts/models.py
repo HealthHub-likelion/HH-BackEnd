@@ -6,8 +6,8 @@ class Member(models.Model):
     nickname = models.CharField(unique=True,max_length=20)
     readMe = models.TextField()
     email = models.EmailField(default='', max_length=150, null=False, blank=False, unique=True)
-    password = models.CharField(unique=True,max_length=20)
-    token =  models.CharField(unique=True,max_length=255)
+    password = models.CharField(max_length=20)
+    token =  models.CharField(max_length=255)
     isOpen = models.BooleanField(default=True)
     img = models.ImageField(blank=True, upload_to="images/", null=True)
 
