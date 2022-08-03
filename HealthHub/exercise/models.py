@@ -28,4 +28,3 @@ class Set(models.Model):
     exercise_id= models.ForeignKey("Exercise", related_name="set_exercise", on_delete=models.CASCADE, db_column="exercise_id")
     set_count = models.IntegerField()
     weight = models.IntegerField()
-
