@@ -1,9 +1,9 @@
 from telnetlib import STATUS
 from urllib.request import install_opener
 from django.shortcuts import get_object_or_404, render
-from .models import Member
+from .models import Member, Follow
 from exercise.models import Routine
-from .serializers import MemberSerializer, MemberCheckSerializer
+from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -64,3 +64,38 @@ class MemberSessionViewSet(viewsets.ModelViewSet):
         member.token = secrets.token_urlsafe(30)
         member.save()
         return Response({"token" : member.token},status=status.HTTP_200_OK)
+
+class MemberFollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    m_queryset = Member.objects.all()
+    serializer_class = FollowSerializer
+
+    def follow_member(self,request):
+        member_queryset = Member.objects.all()
+        header = request.META['HTTP_AUTHORIZATION']
+        name = request.data['name']
+        following_member = get_object_or_404(self.m_queryset,nickname=name)
+        member = get_object_or_404(self.m_queryset,token=header)
+        Follow.objects.create(
+            following_id = following_member,
+            follower_id = member
+        )
+        return Response({'response':True},status=status.HTTP_200_OK)
+
+    def unfollow_member(self, request):
+        member_queryset = Member.objects.all()
+        header = request.META['HTTP_AUTHORIZATION']
+        name = request.data['name']
+        following_member = get_object_or_404(self.m_queryset,nickname=name)
+        member = get_object_or_404(self.m_queryset,token=header)
+        follow_data = get_object_or_404(
+                            self.queryset,
+                            following_id=following_member.id,
+                            follower_id = member.id
+                        )
+        follow_data.delete()
+        return Response({'response':True},status=status.HTTP_200_OK)
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
