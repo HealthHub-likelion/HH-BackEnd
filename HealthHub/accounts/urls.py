@@ -24,7 +24,7 @@ member_session = MemberSessionViewSet.as_view({
 })
 
 follow = MemberFollowViewSet.as_view({
-    'get' : 'list',
+    'get' : 'show_follow',
     'post' : 'follow_member',
     'delete' : 'unfollow_member'
 })
