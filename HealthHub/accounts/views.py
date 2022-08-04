@@ -1,6 +1,7 @@
+from urllib import response
 from django.shortcuts import render
 from .models import Member
-from .serializers import MemberSerializer, MemberCheckSerializer, MemberSearchByNickname
+from .serializers import MemberSerializer, MemberCheckSerializer, MemberSearchByNickname, MemberUpdateReadme, MemberUploadProfileImageSerializer, MemberDeleteProfileImageSerializer
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -22,15 +23,53 @@ class JMemberViewSet(viewsets.ModelViewSet):
         
         if('nickname' in request.data):
             if(searched_member != None ):
-                nickname = searched_member.get('nickname')
-                img_path = searched_member.get('img')
+                nickname = searched_member.nickname
+                img_path = str(searched_member.img)
+                
+                print("\n\n\n\n\n",img_path, " \n\n\n\n\n\n")
                 return Response({'Member':{
                     'name' : nickname,
                     'img' : img_path
                     }},status=status.HTTP_200_OK)
         else:
             return Response({'response':'유효하지 않은 인자가 요청되었습니다.'},status = status.HTTP_400_BAD_REQUEST)
-    
+        
+
+class MemberUpdateReadmeViewSet(viewsets.ModelViewSet):
+    serializer_class = MemberUpdateReadme
+    def update_readme(self, request):
+        try:
+            member = Member.objects.get(token=request.data['token'])
+            member.readMe = request.data['readMe']
+            member.save()
+            return Response({'response':True},status=status.HTTP_200_OK)
+        except Exception as e:
+            print("\n\n\n", e, "\n\n\n")
+            return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+
+class MemberUploadProfileImage(viewsets.ModelViewSet):
+    serializer_class = MemberUploadProfileImageSerializer
+    def upload_profile_image(self, request):
+        try:
+            member = Member.objects.get(token = request.data['token'])
+            member.img = request.data['img']
+            member.save()
+            return Response({'response' : True}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print("\n\n\n", e, "\n\n\n")
+            return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+
+class MemberDeleteProfileImage(viewsets.ModelViewSet):
+    serializer_class = MemberDeleteProfileImageSerializer
+    def delete_profile_image(self, request):
+        try:
+            member = Member.objects.get(token = request.data['token'])
+            member.img = ""
+            member.save()
+            return Response({'response' : True}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print("\n\n\n", e, "\n\n\n")
+            return Response({'response':False},status.HTTP_400_BAD_REQUEST)
     
     
 class MemberCheckViewSet(viewsets.ModelViewSet):
