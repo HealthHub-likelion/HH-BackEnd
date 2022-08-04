@@ -46,6 +46,6 @@ urlpatterns =[
     path('checkNickname/', j_member_search_by_nickname),
     path('updatereadme/', member_update_readme),
     path('member/', member_check),
-    path('profileimage/upload', member_upload_profile_image),
-    path('profileimage/delete', member_delete_profile_image),
+    path('profileimage/upload/', member_upload_profile_image),
+    path('profileimage/delete/', member_delete_profile_image),
 ]

@@ -39,7 +39,7 @@ class MemberUpdateReadmeViewSet(viewsets.ModelViewSet):
     serializer_class = MemberUpdateReadme
     def update_readme(self, request):
         try:
-            member = Member.objects.get(token=request.data['token'])
+            member = Member.objects.get(token=request.META.get('HTTP_AUTHORIZATION'))
             member.readMe = request.data['readMe']
             member.save()
             return Response({'response':True},status=status.HTTP_200_OK)
@@ -50,8 +50,8 @@ class MemberUpdateReadmeViewSet(viewsets.ModelViewSet):
 class MemberUploadProfileImage(viewsets.ModelViewSet):
     serializer_class = MemberUploadProfileImageSerializer
     def upload_profile_image(self, request):
-        try:
-            member = Member.objects.get(token = request.data['token'])
+        try:            
+            member = Member.objects.get(token=request.META.get('HTTP_AUTHORIZATION'))
             member.img = request.data['img']
             member.save()
             return Response({'response' : True}, status=status.HTTP_200_OK)
@@ -63,7 +63,7 @@ class MemberDeleteProfileImage(viewsets.ModelViewSet):
     serializer_class = MemberDeleteProfileImageSerializer
     def delete_profile_image(self, request):
         try:
-            member = Member.objects.get(token = request.data['token'])
+            member = Member.objects.get(token=request.META.get('HTTP_AUTHORIZATION'))
             member.img = ""
             member.save()
             return Response({'response' : True}, status=status.HTTP_200_OK)
