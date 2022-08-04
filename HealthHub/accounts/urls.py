@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet
+from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet, MemberFollowViewSet
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
@@ -11,7 +11,6 @@ router.register('member', MemberViewSet)
 member = MemberViewSet.as_view({
     'get': 'list',
     'post': 'create',
-    'delete': 'destroy',
 })
 
 member_check = MemberCheckViewSet.as_view({
@@ -24,9 +23,16 @@ member_session = MemberSessionViewSet.as_view({
     'post' : 'login'
 })
 
+follow = MemberFollowViewSet.as_view({
+    'get' : 'show_follow',
+    'post' : 'follow_member',
+    'delete' : 'unfollow_member'
+})
+
 
 urlpatterns =[
     path('', member),
     path('member/',member_check),
-    path('member/login',member_session)
+    path('member/login',member_session),
+    path('member/follow',follow)
 ]

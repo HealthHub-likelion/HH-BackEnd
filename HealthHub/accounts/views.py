@@ -1,9 +1,9 @@
 from telnetlib import STATUS
 from urllib.request import install_opener
 from django.shortcuts import get_object_or_404, render
-from .models import Member
+from .models import Member, Follow
 from exercise.models import Routine
-from .serializers import MemberSerializer, MemberCheckSerializer
+from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -64,3 +64,57 @@ class MemberSessionViewSet(viewsets.ModelViewSet):
         member.token = secrets.token_urlsafe(30)
         member.save()
         return Response({"token" : member.token},status=status.HTTP_200_OK)
+
+class MemberFollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    m_queryset = Member.objects.all()
+    serializer_class = FollowSerializer
+
+    def follow_member(self,request):
+        header = request.META['HTTP_AUTHORIZATION']
+        name = request.data['name']
+        following_member = get_object_or_404(self.m_queryset,nickname=name)
+        member = get_object_or_404(self.m_queryset,token=header)
+        Follow.objects.create(
+            following_id = following_member,
+            follower_id = member
+        )
+        return Response({'response':True},status=status.HTTP_200_OK)
+
+    def unfollow_member(self, request):
+        header = request.META['HTTP_AUTHORIZATION']
+        name = request.data['name']
+        following_member = get_object_or_404(self.m_queryset,nickname=name)
+        member = get_object_or_404(self.m_queryset,token=header)
+        follow_data = get_object_or_404(
+                            self.queryset,
+                            following_id=following_member,
+                            follower_id = member
+                        )
+        follow_data.delete()
+        return Response({'response':True},status=status.HTTP_200_OK)
+
+    def show_follow(self, request):
+        query = request.GET.get('who', None)
+        json = {'Member':[]}
+        if query == 'follower':
+            header = request.META.get('HTTP_AUTHORIZATION')
+            member = get_object_or_404(self.m_queryset,token = header)
+            follow_list = self.queryset.filter(following_id = member.id) 
+            for follow in follow_list:
+                follow_member = self.m_queryset.get(nickname=follow.follower_id)
+                json['Member'].append({'name':follow_member.nickname,'img':follow_member.img.url})
+        elif query == 'following':
+            header = request.META.get('HTTP_AUTHORIZATION')
+            member = get_object_or_404(self.m_queryset,token = header)
+            follow_list = self.queryset.filter(follower_id = member.id) 
+            for follow in follow_list:
+                follow_member = self.m_queryset.get(nickname=follow.following_id)
+                json['Member'].append({'name':follow_member.nickname,'img':follow_member.img.url})
+        else:
+            return Response({'response':False},status=status.HTTP_400_BAD_REQUEST)
+        return Response(json,status=status.HTTP_200_OK)
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
