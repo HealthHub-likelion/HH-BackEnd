@@ -25,6 +25,6 @@ class RoutineExercise(models.Model):
 
 class Set(models.Model):
     id = models.AutoField(primary_key=True)
-    exercise_id= models.ForeignKey("Exercise", related_name="set_exercise", on_delete=models.CASCADE, db_column="exercise_id")
+    routine_exercise_id= models.ForeignKey("RoutineExercise", related_name="set_exercise", on_delete=models.CASCADE, db_column="routine_exercise_id",null=True)
     set_count = models.IntegerField()
     weight = models.IntegerField()
