@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymExerciseViewSet,ymRoutineViewSet,ymRoutineExerciseViewSet,ymSetViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet
+from .views import ymExerciseViewSet,ymRoutineViewSet,ymRoutineExerciseViewSet,ymSetViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet,RoutineSerializer
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
@@ -32,6 +32,8 @@ routine_detail = ymRoutineDetailViewSet.as_view({
 routine_fork = ymRoutineForkViewSet.as_view({
     'post':'update',
 })
+
+
 
 
 

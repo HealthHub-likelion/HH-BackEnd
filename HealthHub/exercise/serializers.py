@@ -5,7 +5,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model=Exercise
         # fields= '__all__'
-        fields = ('en_name','ko_name','part','id')
+        fields = ('en_name','ko_name','part')
 
 
 class SetSerializer(serializers.ModelSerializer):
@@ -16,6 +16,7 @@ class SetSerializer(serializers.ModelSerializer):
 
 
 class RoutineExerciseSerializer(serializers.ModelSerializer):
+    set_exercise = SetSerializer(many=True)
     class Meta:
         model=RoutineExercise
         # fields=  ('id','routine_id')
@@ -23,12 +24,12 @@ class RoutineExerciseSerializer(serializers.ModelSerializer):
 
 
 class RoutineSerializer(serializers.ModelSerializer):
-    # re_connect_ex = RoutineExerciseSerializer(source='RoutineExercise')
-    # re_connect_ex =  serializers.RelatedField(many=True)
+    re_routine = RoutineExerciseSerializer(many=True)
+    # set_exercise = serializers.StringRelatedField(many=True)
     class Meta:
         model=Routine
-        fields= '__all__'
-        # fields= ('id','creatorName','routineName','count','isOpen','member_id','RE_list')
+        fields= ('id')
+        fields= ('id','creatorName','routineName','isOpen','member_id','re_routine')
     
     # def get_RE_list(self,obj):
     #     routine_query = RoutineExercise.objects.filter(
