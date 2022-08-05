@@ -22,6 +22,11 @@ class RoutineExerciseSerializer(serializers.ModelSerializer):
         # fields=  ('id','routine_id')
         fields= '__all__'
 
+class RoutineExerciseOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=RoutineExercise
+        fields= '__all__'
+
 
 class RoutineSerializer(serializers.ModelSerializer):
     re_routine = RoutineExerciseSerializer(many=True)
@@ -38,3 +43,7 @@ class RoutineSerializer(serializers.ModelSerializer):
     #     )   
     #     serializer =  RoutineExerciseSerializer(routine_query,many=True)
     #     return serializer.data
+class RoutineOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Routine
+        fields= '__all__'
