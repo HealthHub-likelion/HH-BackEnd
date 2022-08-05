@@ -24,13 +24,11 @@ class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
         model = Member
         fields = ['token', 'img']
         
-class MemberDeleteProfileImageSerializer(serializers.ModelSerializer):
+class MemberGetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['token']
+        fields = None
         
-        
-
 class MemberCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model=Member
