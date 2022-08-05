@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render
 from .models import Exercise,Routine,RoutineExercise,Set
 from accounts.models import Member
@@ -9,9 +10,21 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 
 
-class ymExerciseViewSet(viewsets.ModelViewSet):
-    queryset = Exercise.objects.all()
+class ymExerciseList(generics.ListAPIView):
     serializer_class = ExerciseSerializer
+    #운동 검색(부위별로)
+    #http://127.0.0.1:8000/exercise/list?
+    #http://127.0.0.1:8000/exercise/list?part=%ED%8C%94
+    def get_queryset(self):
+        queryset = Exercise.objects.all()
+        searchpart = self.request.query_params.get('part')
+        if searchpart is not None:
+            queryset = queryset.filter(part=searchpart)
+        return queryset
+
+class ymExerciseViewSet(viewsets.ModelViewSet):
+    serializer_class = ExerciseSerializer
+    queryset = Exercise.objects.all()
 
 class ymRoutineViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
