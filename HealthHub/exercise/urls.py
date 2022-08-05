@@ -21,10 +21,11 @@ routine_list = ymRoutineViewSet.as_view({
     'get': 'list',
     'post': 'create',
 })
-
-# 루틴 조회/삭제
+routin_one = ymRoutineViewSet.as_view({
+    'get': 'retrieve',
+})
+# 루틴 삭제/수정
 routine_detail = ymRoutineDetailViewSet.as_view({
-    'get': 'retrieve',# todo 루틴 하나 보여줌. -> 운동 목록과 함께 보여주게
     'delete': 'destroy',
     'post': 'partial_update',#루틴 퍼블릭/프라이빗 요청
 })
@@ -54,7 +55,8 @@ urlpatterns =[
     path('',exercise),
     path('list', ymExerciseList.as_view()),
     path('routine/',routine_list),
-    path('routine/<int:pk>', routine_detail),
+    path('routine/<int:pk>/detail', routine_detail),
+    path('routine/<int:pk>', routin_one),
     path('routine/<int:pk>/fork', routine_fork),
     path('re/', re),
     path('set/', set),
