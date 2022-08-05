@@ -26,9 +26,45 @@ class ymExerciseViewSet(viewsets.ModelViewSet):
     serializer_class = ExerciseSerializer
     queryset = Exercise.objects.all()
 
+
 class ymRoutineViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
-    serializer_class = RoutineOnlySerializer
+    serializer_class = RoutineSerializer
+    
+    def create(self,request):
+        data = json.loads(request.body)
+        #멤버 정보
+        member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+        #루틴 만들기
+        new_routine = Routine.objects.create(
+            member_id = member,
+            creatorName = member.nickname,
+            routineName = data['routineName'],
+            isOpen = data['isOpen'],
+            count = 0
+        )
+
+        #RoutineExercise 만들기
+        exerciselist = data['ExerciseList']
+        for exercise in exerciselist:
+            ex_obj = Exercise.objects.get(ko_name = exercise['ko_name'])
+
+            new_routine_exercise = RoutineExercise.objects.create(
+                routine_id = new_routine,
+                exercise_name = ex_obj
+            )
+
+            #Set 만들기
+            setlist = exercise["set_list"]
+            for set in setlist:
+                new_set = Set.objects.create(
+                    routine_exercise_id = new_routine_exercise,
+                    count = set["count"],
+                    weight = set['weight'],
+                )
+
+        return Response(True,status=status.HTTP_200_OK)
+
 
 class ymRoutineDetailViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
