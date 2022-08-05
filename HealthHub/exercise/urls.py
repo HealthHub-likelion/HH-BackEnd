@@ -1,11 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymExerciseViewSet,ymRoutineViewSet,ymRoutineExerciseViewSet,ymSetViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet,RoutineSerializer
+from .views import ymExerciseList,ymRoutineViewSet,ymRoutineExerciseViewSet,ymSetViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet,RoutineSerializer,ymExerciseViewSet
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
 # 두 번째 인자는 ViewSet
+# router.register('exercise', ymExerciseList)
 router.register('exercise', ymExerciseViewSet)
 router.register('exercise', ymRoutineViewSet)
 router.register('exercise', ymRoutineDetailViewSet)
@@ -50,7 +51,8 @@ set = ymSetViewSet.as_view({
 })
 
 urlpatterns =[
-    path('', exercise),
+    path('',exercise),
+    path('list', ymExerciseList.as_view()),
     path('routine/',routine_list),
     path('routine/<int:pk>', routine_detail),
     path('routine/<int:pk>/fork', routine_fork),
