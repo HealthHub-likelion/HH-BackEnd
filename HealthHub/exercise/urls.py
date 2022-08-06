@@ -21,10 +21,15 @@ routine_list = ymRoutineViewSet.as_view({
     'get': 'list',
     'post': 'create',
 })
+
+#루틴 한번에 수정
 routin_one = ymRoutineViewSet.as_view({
     'get': 'retrieve',
+    'post': 'update',
 })
-# 루틴 삭제/수정
+
+# 루틴 삭제
+# 루틴 이름과 권한만 수정
 routine_detail = ymRoutineDetailViewSet.as_view({
     'delete': 'destroy',
     'post': 'partial_update',#루틴 퍼블릭/프라이빗 요청
@@ -37,8 +42,6 @@ routine_fork = ymRoutineForkViewSet.as_view({
 
 
 
-
-
 re = ymRoutineExerciseViewSet.as_view({
     'get': 'list',
     'post': 'create',
@@ -46,8 +49,8 @@ re = ymRoutineExerciseViewSet.as_view({
 })
 
 set = ymSetViewSet.as_view({
-    'get': 'retrieve',
-    'post': 'partial_update',
+    'get': 'list',
+    'post': 'create',
     'delete': 'destroy',
 })
 
@@ -59,5 +62,5 @@ urlpatterns =[
     path('routine/<int:pk>/', routin_one),
     path('routine/<int:pk>/fork/', routine_fork),
     path('re/', re),
-    path('set/<int:pk>/', set),
+    path('set/', set),
 ]
