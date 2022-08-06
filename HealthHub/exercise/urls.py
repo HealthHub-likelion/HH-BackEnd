@@ -46,18 +46,18 @@ re = ymRoutineExerciseViewSet.as_view({
 })
 
 set = ymSetViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
+    'get': 'retrieve',
+    'post': 'partial_update',
     'delete': 'destroy',
 })
 
 urlpatterns =[
     path('',exercise),
-    path('list', ymExerciseList.as_view()),
+    path('list/', ymExerciseList.as_view()),
     path('routine/',routine_list),
-    path('routine/<int:pk>/detail', routine_detail),
-    path('routine/<int:pk>', routin_one),
-    path('routine/<int:pk>/fork', routine_fork),
+    path('routine/<int:pk>/detail/', routine_detail),
+    path('routine/<int:pk>/', routin_one),
+    path('routine/<int:pk>/fork/', routine_fork),
     path('re/', re),
-    path('set/', set),
+    path('set/<int:pk>/', set),
 ]
