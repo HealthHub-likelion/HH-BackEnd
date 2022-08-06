@@ -5,7 +5,6 @@ from .models import Exercise,Routine,RoutineExercise,Set
 from accounts.models import Member
 from .serializers import ExerciseSerializer,RoutineSerializer,RoutineExerciseSerializer,SetSerializer,RoutineOnlySerializer,RoutineExerciseOnlySerializer
 import json
-# Create your views here.
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import generics, status

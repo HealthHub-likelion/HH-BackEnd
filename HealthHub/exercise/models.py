@@ -11,9 +11,6 @@ class Routine(models.Model):
     isOpen = models.BooleanField()
     count = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.routineName
-
 
 class Exercise(models.Model):
     id = models.AutoField(primary_key=True)
@@ -21,8 +18,6 @@ class Exercise(models.Model):
     ko_name = models.CharField(max_length=40,unique=True)
     part = models.CharField(max_length=40)
 
-    def __str__(self):
-        return self.ko_name
 
 class RoutineExercise(models.Model):
     id = models.AutoField(primary_key=True)

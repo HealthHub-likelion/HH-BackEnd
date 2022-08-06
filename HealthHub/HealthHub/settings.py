@@ -133,3 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+RECORD_MEDIA_ROOT = os.path.join(BASE_DIR, 'record/media')
+RECORD_MEDIA_URL = '/record/media/'

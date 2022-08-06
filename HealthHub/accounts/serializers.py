@@ -5,7 +5,7 @@ from rest_framework import serializers
 class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model=Member
-        fields= ['nickname','email','password']
+        fields= ['nickname','email','password','img']
 
 class MemberCheckSerializer(serializers.ModelSerializer):
     class Meta:
