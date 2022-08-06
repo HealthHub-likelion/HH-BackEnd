@@ -1,5 +1,6 @@
 from urllib import response
 from django.shortcuts import render
+from itsdangerous import Serializer
 from .models import Exercise,Routine,RoutineExercise,Set
 from accounts.models import Member
 from .serializers import ExerciseSerializer,RoutineSerializer,RoutineExerciseSerializer,SetSerializer,RoutineOnlySerializer,RoutineExerciseOnlySerializer
@@ -62,8 +63,48 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                     count = set["count"],
                     weight = set['weight'],
                 )
-
+        
         return Response(True,status=status.HTTP_200_OK)
+
+    def update(self,request,pk):
+        data = json.loads(request.body)
+        #루틴 찾기
+        routine_obj = Routine.objects.get(id = pk)
+
+        #루틴 수정
+        routine_obj.routineName =  data['routineName']
+        routine_obj.isOpen = data['isOpen']
+        routine_obj.save()
+
+        #re_list 찾아서 삭제하기
+        re_obj_list = RoutineExercise.objects.filter(routine_id = routine_obj.id)
+        for re_obj in re_obj_list:
+            re_obj.delete()
+
+        #RoutineExercise 만들기
+        exerciselist = data['ExerciseList']
+        for exercise in exerciselist:
+            ex_obj = Exercise.objects.get(ko_name = exercise['ko_name'])
+
+            new_routine_exercise = RoutineExercise.objects.create(
+                routine_id = routine_obj,
+                exercise_name = ex_obj
+            )
+
+            #Set 만들기
+            setlist = exercise["set_list"]
+            for set in setlist:
+                new_set = Set.objects.create(
+                    routine_exercise_id = new_routine_exercise,
+                    count = set["count"],
+                    weight = set['weight'],
+                )
+        #반환
+        serializer = self.get_serializer(routine_obj)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
 
 
 class ymRoutineDetailViewSet(viewsets.ModelViewSet):
