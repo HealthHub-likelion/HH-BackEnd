@@ -14,7 +14,6 @@ router.register('exercise', ymRoutineDetailViewSet)
 exercise = ymExerciseViewSet.as_view({
     'get': 'list',
     'post': 'create',
-    'delete': 'destroy',
 })
 #루틴 목록 조회/생성
 routine_list = ymRoutineViewSet.as_view({
@@ -39,8 +38,6 @@ routine_detail = ymRoutineDetailViewSet.as_view({
 routine_fork = ymRoutineForkViewSet.as_view({
     'post':'update',
 })
-
-
 
 re = ymRoutineExerciseViewSet.as_view({
     'get': 'list',
