@@ -30,7 +30,37 @@ class ymExerciseViewSet(viewsets.ModelViewSet):
 class ymRoutineViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
     serializer_class = RoutineSerializer
-    
+    #루틴 리스트 예쁘게 전달
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    #루틴 하나 예쁘게 전달
+    def retrieve(self, request, pk=None):
+        instance = self.get_object()
+        data = self.serializer_class(instance).data
+        # print(self.serializer_class(instance).data)
+        routine_list = data["re_routine"]
+        idx = 0
+        for routine in routine_list:
+            ex_obj = Exercise.objects.get(id = routine["exercise_id"])
+            ko_name = ex_obj.ko_name
+            en_name = ex_obj.en_name
+            data["re_routine"][idx]["exercise_ko_name"] = ko_name
+            data["re_routine"][idx]["exercise_en_name"] = en_name
+            idx +=1
+        print(data)
+        return Response(data,status=status.HTTP_200_OK)
+
+    #루틴 생성
     def create(self,request):
         data = json.loads(request.body)
         #멤버 정보
@@ -51,7 +81,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
 
             new_routine_exercise = RoutineExercise.objects.create(
                 routine_id = new_routine,
-                exercise_name = ex_obj
+                exercise_id = ex_obj
             )
 
             #Set 만들기
@@ -87,7 +117,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
 
             new_routine_exercise = RoutineExercise.objects.create(
                 routine_id = routine_obj,
-                exercise_name = ex_obj
+                exercise_id = ex_obj
             )
 
             #Set 만들기
@@ -143,11 +173,11 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
         re_obj_list = RoutineExercise.objects.filter(routine_id = pk)
         #루틴-운동 복사 / 세트 복사
         for re_obj in re_obj_list:
-            ex_obj = Exercise.objects.get(id = re_obj.exercise_name.id)
+            ex_obj = Exercise.objects.get(id = re_obj.exercise_id.id)
             set_obj_list = Set.objects.filter(routine_exercise_id=re_obj.id)
             new_re_obj = RoutineExercise.objects.create(
                 routine_id = newroutine,#새로운 루틴_id
-                exercise_name = ex_obj#기존 운동_name
+                exercise_id = ex_obj#기존 운동_id
             )
             for set_obj in set_obj_list:
                 new_set = Set.objects.create(

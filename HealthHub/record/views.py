@@ -50,9 +50,11 @@ class ymMyRecordListViewSet(viewsets.ModelViewSet):
             member_id = member['id']
             member_nickname = member['nickname']
             member_img = member['img']
+            member_isOpen = member["isOpen"]
             for routine in member['routine_member']:
                 routine_id = routine["id"]
                 routine_name = routine["routineName"]
+                routine_isOpen = routine["isOpen"]
                 for record in routine["record_routine"]:
                     record_one = {}
                     record_one["record_id"] = record["id"]
@@ -63,9 +65,11 @@ class ymMyRecordListViewSet(viewsets.ModelViewSet):
                     record_one["record_create_time"] = record["create_time"]
                     record_one["routine_id"] = routine_id
                     record_one["routine_name"] = routine_name
+                    record_one["routine_isOpen"] = routine_isOpen
                     record_one["member_id"] = member_id
                     record_one["member_nickname"] = member_nickname
                     record_one["member_img"] = member_img
+                    record_one["member_isOpen"] = member_isOpen
                     myres.append(record_one)
 
         # print(myres)

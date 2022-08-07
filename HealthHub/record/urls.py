@@ -11,6 +11,7 @@ record = ymRecordViewSet.as_view({
     'post': 'create',
 })
 #기록 수정/삭제
+#삭제 -> routine count 빼주기 todo
 record_detail = ymRecordViewSet.as_view({
     'get':'retrieve',
     'delete': 'destroy',
