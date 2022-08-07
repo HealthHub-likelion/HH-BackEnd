@@ -14,6 +14,7 @@ member = MemberViewSet.as_view({
 })
 
 member_check = MemberCheckViewSet.as_view({
+    'get' : 'check_token',
     'post': 'check_member',
     'patch' : 'open_member',
     'delete': 'delete_member'
