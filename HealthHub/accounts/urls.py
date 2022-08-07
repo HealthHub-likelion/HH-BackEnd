@@ -14,12 +14,14 @@ member = MemberViewSet.as_view({
 })
 
 member_check = MemberCheckViewSet.as_view({
+    'get' : 'view_member',
     'post': 'check_member',
     'patch' : 'open_member',
     'delete': 'delete_member'
 })
 
 member_session = MemberSessionViewSet.as_view({
+    'get' : 'check_token',
     'post' : 'login'
 })
 
@@ -33,6 +35,6 @@ follow = MemberFollowViewSet.as_view({
 urlpatterns =[
     path('', member),
     path('member/',member_check),
-    path('member/login',member_session),
+    path('member/session',member_session),
     path('member/follow',follow)
 ]
