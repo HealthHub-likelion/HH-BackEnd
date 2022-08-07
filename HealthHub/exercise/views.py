@@ -31,16 +31,25 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
     serializer_class = RoutineSerializer
     #루틴 리스트 예쁘게 전달
-    def list(self, request, *args, **kwargs):
+    def list(self, request):
         queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+        routine_idx = 0
+        for routine in data:
+            ex_list = routine["re_routine"]
+            ex_idx = 0
+            for exercise in ex_list:
+                ex_obj = Exercise.objects.get(id = exercise["exercise_id"])
+                ko_name = ex_obj.ko_name
+                en_name = ex_obj.en_name
+                data[routine_idx]["re_routine"][ex_idx]["exercise_ko_name"] = ko_name
+                data[routine_idx]["re_routine"][ex_idx]["exercise_en_name"] = en_name
+                ex_idx +=1
+            routine_idx +=1
+        print(data)
+
+        return Response(data,status=status.HTTP_200_OK)
 
 
     #루틴 하나 예쁘게 전달
@@ -57,7 +66,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
             data["re_routine"][idx]["exercise_ko_name"] = ko_name
             data["re_routine"][idx]["exercise_en_name"] = en_name
             idx +=1
-        print(data)
+        # print(data)
         return Response(data,status=status.HTTP_200_OK)
 
     #루틴 생성
