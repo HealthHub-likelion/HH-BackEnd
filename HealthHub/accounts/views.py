@@ -116,7 +116,7 @@ class MemberSessionViewSet(viewsets.ModelViewSet):
         member = Member.objects.get(password = request.data['password'],email=request.data['email'])
         member.token = secrets.token_urlsafe(30)
         member.save()
-        return Response({"token" : member.token},status=status.HTTP_200_OK)
+        return Response({"token" : member.token, "name":member.nickname},status=status.HTTP_200_OK)
 
     def check_token(self,request):
         header = request.META.get('HTTP_AUTHORIZATION')
