@@ -5,7 +5,7 @@ from numpy import integer
 # Create your models here.
 class Routine(models.Model):
     id = models.AutoField(primary_key=True)
-    member_id = models.ForeignKey("accounts.Member", related_name="routine_member", on_delete=models.CASCADE, db_column="member_id")
+    member_id = models.ForeignKey("accounts.Member", related_name="routine_member", on_delete=models.CASCADE, db_column="member_id",null=True,blank=True)
     creatorName = models.CharField(max_length=20)
     routineName = models.CharField(max_length=20)
     isOpen = models.BooleanField()
