@@ -32,7 +32,7 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         routine_obj.count +=1
         routine_obj.save()
         
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({'response':True}, status=status.HTTP_201_CREATED, headers=headers)
     
 class ymMyRecordListViewSet(viewsets.ModelViewSet):
     serializer_class = MemberForRoutineSerializer
