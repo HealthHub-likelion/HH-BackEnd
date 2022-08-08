@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from urllib import response
 from django.shortcuts import render
 from itsdangerous import Serializer
@@ -32,7 +33,8 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
     serializer_class = RoutineSerializer
     #루틴 리스트 예쁘게 전달
     def list(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
+        member = Member.objects.get(token =self.request.META.get('HTTP_AUTHORIZATION'))
+        queryset = Routine.objects.filter(member_id = member) 
         serializer = self.get_serializer(queryset, many=True)
         data = serializer.data
         routine_idx = 0
@@ -102,22 +104,23 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                     weight = set['weight'],
                 )
         
-        return Response(True,status=status.HTTP_200_OK)
+        return Response({'response':True},status=status.HTTP_200_OK)
 
     def update(self,request,pk):
         data = json.loads(request.body)
-        #루틴 찾기
+        #멤버 정보
+        member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+        #기존 루틴 찾기
         routine_obj = Routine.objects.get(id = pk)
 
-        #루틴 수정
-        routine_obj.routineName =  data['routineName']
-        routine_obj.isOpen = data['isOpen']
-        routine_obj.save()
-
-        #re_list 찾아서 삭제하기
-        re_obj_list = RoutineExercise.objects.filter(routine_id = routine_obj.id)
-        for re_obj in re_obj_list:
-            re_obj.delete()
+        #새 루틴 만들기
+        new_routine = Routine.objects.create(
+            member_id = member,
+            creatorName = member.nickname,
+            routineName = data['routineName'],
+            isOpen = data['isOpen'],
+            count = routine_obj.count #기존 루틴 카운트 그대로
+        )
 
         #RoutineExercise 만들기
         exerciselist = data['ExerciseList']
@@ -125,7 +128,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
             ex_obj = Exercise.objects.get(ko_name = exercise['ko_name'])
 
             new_routine_exercise = RoutineExercise.objects.create(
-                routine_id = routine_obj,
+                routine_id = new_routine,
                 exercise_id = ex_obj
             )
 
@@ -137,9 +140,12 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                     count = set["count"],
                     weight = set['weight'],
                 )
-        #반환
-        serializer = self.get_serializer(routine_obj)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+
+        #기존 루틴 멤버 연결 끊기
+        routine_obj.member_id = None
+        routine_obj.save()
+        
+        return Response({'response':True},status=status.HTTP_200_OK)
 
 
 
@@ -156,9 +162,9 @@ class ymRoutineDetailViewSet(viewsets.ModelViewSet):
             routine = Routine.objects.get(id = pk)
             routine.isOpen = data['isOpen']
             routine.save()
-            return Response(True,status=status.HTTP_200_OK)
+            return Response({'response':True},status=status.HTTP_200_OK)
         else:
-            return Response(False,status=status.HTTP_200_OK)
+            return Response({'response':False},status=status.HTTP_200_OK)
 
 class ymRoutineForkViewSet(viewsets.ModelViewSet):
     queryset = Routine.objects.all()
@@ -194,7 +200,7 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
                     count = set_obj.count,
                     weight = set_obj.weight
                 )
-        return Response(True,status=status.HTTP_200_OK)     
+        return Response({'response':True},status=status.HTTP_200_OK)     
 
 
 
