@@ -1,3 +1,4 @@
+import stat
 from telnetlib import STATUS
 from urllib.request import install_opener
 from django.shortcuts import get_object_or_404, render
@@ -14,6 +15,17 @@ import json
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
+
+    def create_member(self,request):
+        Member.objects.create(
+            email = request.data['email'],
+            nickname = request.data['name'],
+            password = request.data['password'],
+            img = 'images/HH_logo.jpg'
+        )
+        return Response({'response':True},status=status.HTTP_200_OK)
+
+
 
 
 class MemberCheckViewSet(viewsets.ModelViewSet):

@@ -10,7 +10,7 @@ router.register('member', MemberViewSet)
 
 member = MemberViewSet.as_view({
     'get': 'list',
-    'post': 'create',
+    'post': 'create_member',
 })
 
 member_check = MemberCheckViewSet.as_view({
