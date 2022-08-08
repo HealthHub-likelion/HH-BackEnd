@@ -51,6 +51,7 @@ class MemberCheckViewSet(viewsets.ModelViewSet):
         else:
             #이미지 경로를 url로 안보내고 그냥 값으로 보내면 decode 오류 발생!! 주의!!
             jsonData = {
+                'id':member.id,
                 'name':member.nickname,
                 'img':member.img.url,
                 'followerCount':followers.count(),
@@ -127,6 +128,7 @@ class MemberSessionViewSet(viewsets.ModelViewSet):
         records = Record.objects.filter(member_id=member.id)
         #이미지 경로를 url로 안보내고 그냥 값으로 보내면 decode 오류 발생!! 주의!!
         jsonData = {
+            'id':member.id,
             'name':member.nickname,
             'img':member.img.url,
             'followerCount':followers.count(),

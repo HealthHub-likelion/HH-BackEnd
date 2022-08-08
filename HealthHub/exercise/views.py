@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from urllib import response
 from django.shortcuts import render
 from itsdangerous import Serializer
