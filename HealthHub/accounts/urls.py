@@ -13,13 +13,7 @@ member_list = MemberViewSet.as_view({
     'post': 'create'
 })
 
-j_member_detail = MemberSearchByNickname.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
-
-j_member_search_by_nickname = MemberSearchByNickname.as_view({
+member_search_by_nickname = MemberSearchByNickname.as_view({
     'post': 'search_nickname',
 })
 
@@ -46,8 +40,7 @@ member_get_setting_option = MemberGetSettingOption.as_view({
 
 urlpatterns =[
     path('', member_list),
-    path('<int:pk>', j_member_detail),
-    path('checkNickname/', j_member_search_by_nickname),
+    path('checknickname/', member_search_by_nickname),
     path('updatereadme/', member_update_readme),
     path('member/', member_check),
     path('profileimage/upload/', member_upload_profile_image),
