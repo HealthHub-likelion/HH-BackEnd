@@ -1,6 +1,8 @@
+from ast import arg
 import stat
 from telnetlib import STATUS
 from urllib.request import install_opener
+from xmlrpc.client import ResponseError
 from django.shortcuts import get_object_or_404, render
 from .models import Member, Follow
 from exercise.models import Routine
@@ -34,45 +36,65 @@ class MemberCheckViewSet(viewsets.ModelViewSet):
 
     def view_member(self,request):
         param = request.GET.get('name', None)
-        member = get_object_or_404(self.queryset,nickname=param)
-        routines = Routine.objects.filter(member_id=member.id)
-        followers = Follow.objects.filter(following_id = member.id)
-        followings = Follow.objects.filter(follower_id = member.id)
-        records = Record.objects.filter(member_id=member.id)
-        print(member.isOpen)
-        if member.isOpen == False:
-            jsonData = {
-                'followerCount':followers.count(),
-                'followingCount':followings.count(),
-                'isFollow':'어떤 값을 의미하는지 확인 필요',
-                'isOpen' : member.isOpen
-            }
-            return Response(jsonData,status=status.HTTP_200_OK)
+        header = request.META.get('HTTP_AUTHORIZATION')
+        member = self.queryset.filter(token = header)
+        find_member = get_object_or_404(self.queryset,nickname=param)
+        routines = Routine.objects.filter(member_id=find_member.id)
+        followers = Follow.objects.filter(following_id = find_member.id)
+        followings = Follow.objects.filter(follower_id = find_member.id)
+        records = Record.objects.filter(member_id=find_member.id)
+        args = {'find_member':find_member,'routines':routines,'followers':followers,'followings':followings ,'records':records}
+
+        #토큰 유효
+        if member.count() > 0:
+            #자기 페이지 조회
+            if member.first().id == find_member.id:
+                return Response(self.make_jsonData(True,None,args),status=status.HTTP_200_OK)
+            else:
+                isFollow = followers.filter(follower_id = member.first().id).count() > 0
+                if find_member.isOpen: #다른 사용자 페이지 공개인경우
+                    return Response(self.make_jsonData(True,isFollow,args),status=status.HTTP_200_OK)
+                else: # 다른 사용자 페이지 비공개
+                    return Response(self.make_jsonData(False,isFollow,args),status=status.HTTP_200_OK)
         else:
+            return Response(status.HTTP_404_NOT_FOUND)
+
+    def make_jsonData(self,isPublic,isFollow,args):
+        print(isPublic)
+        if isPublic:
             #이미지 경로를 url로 안보내고 그냥 값으로 보내면 decode 오류 발생!! 주의!!
             jsonData = {
-                'id':member.id,
-                'name':member.nickname,
-                'img':member.img.url,
-                'followerCount':followers.count(),
-                'followingCount':followings.count(),
-                'readMe':member.readMe,
+                'id':args['find_member'].id,
+                'name':args['find_member'].nickname,
+                'img':args['find_member'].img.url,
+                'followerCount':args['followers'].count(),
+                'followingCount':args['followings'].count(),
+                'readMe':args['find_member'].readMe,
                 'routine':[],
-                'recordCount':records.count(),
-                'recordTimeList':[]
+                'recordCount':args['records'].count(),
+                'recordTimeList':[],
+                'isFollow': isFollow,
+                'isOpen':True
             }
-            for routine in routines:
+            for routine in args['routines']:
                 routine_data = {
                     'routineId' : routine.id,
                     'routineName' : routine.routineName,
                     'routineCount' : routine.count,
-                    'routineOpen' : routine.isOpen
+                    'routineOpen' : routine.isOpen,
                 }
                 jsonData['routine'].append(routine_data)
-            for record in records:
-                jsonData['recordTimeList'].append(record.create_time.strftime('%Y/%m/%d'))
-            
-            return Response(jsonData,status=status.HTTP_200_OK)
+            for record in args['records']:
+                jsonData['recordTimeList'].append(record.create_time.strftime('%Y-%m-%d'))
+        else:
+            jsonData = {
+                'followerCount':args['followers'].count(),
+                'followingCount':args['followings'].count(),
+                'isFollow':isFollow,
+                'isOpen' : False
+            }
+        return jsonData
+
 
     def check_member(self,request):
         if('name' in request.data):
