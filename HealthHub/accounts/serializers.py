@@ -16,3 +16,23 @@ class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model=Follow
         fields = ['following_id','follower_id']
+        
+class MemberSearchByNicknameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Member
+        fields = ['nickname']
+        
+class MemberUpdateReadmeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Member
+        fields = ['readMe']
+        
+class MemberGetTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Member
+        fields = None
+        
+class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Member
+        fields = ['img']
