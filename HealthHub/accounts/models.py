@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 # Create your models here.
@@ -7,9 +8,9 @@ class Member(models.Model):
     readMe = models.TextField()
     email = models.EmailField(default='', max_length=150, null=False, blank=False, unique=True)
     password = models.CharField(max_length=20)
-    token =  models.CharField(max_length=255, null=False)
+    token =  models.CharField(max_length=255)
     isOpen = models.BooleanField(default=True)
-    img = models.ImageField(blank=True, upload_to="images/", null=True)
+    img = models.ImageField(default='default',blank=True, upload_to="images/", null=True)
 
     def __str__(self):
         return str(self.nickname)
