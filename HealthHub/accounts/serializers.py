@@ -17,12 +17,12 @@ class MemberSearchByNickname(serializers.ModelSerializer):
 class MemberUpdateReadme(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['token', 'readMe']
+        fields = ['readMe']
         
 class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['token', 'img']
+        fields = ['img']
         
 class MemberGetTokenSerializer(serializers.ModelSerializer):
     class Meta:
