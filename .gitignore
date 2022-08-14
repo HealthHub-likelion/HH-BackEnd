@@ -1,2 +1,3 @@
 *mysettings.py
 *.sqlite3
+.env
