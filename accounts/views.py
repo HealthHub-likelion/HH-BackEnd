@@ -260,20 +260,22 @@ class MemberSearchByKeyword(viewsets.ModelViewSet):
         try:
             print(request.data['keyword'])
             keyword = request.data['keyword']
-            members_data = {}
+            dict_data = {'Member':[]}
             members = Member.objects.all()
+            print(type(members))
             for member in members:
-                if member in keyword:
-                    row = { "img" : member.img, "name" : member.name }
-                    members_data.update(row)
-            print(members_data)
+                if keyword in member.nickname:
+                    print("이 닉네임 : ", member.nickname)
+                    dict_data['Member'].append({'name':member.nickname,'img':str(member.img)})
             
-            response_data = {"Member" : { members_data }}
-            print(response_data)
-            return Response(response_data,status=status.HTTP_200_OK)
+            json_data = json.dumps(dict_data)
+            
+            print("타입은 ", type(json_data))
+            #return Response(json_data,status=status.HTTP_200_OK)
+            return Response(dict_data,status=status.HTTP_200_OK)
             
         except Exception as e:
-            print(e)
+            print("\n\n\n\n", e, "전송됨")
             return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
 
 
