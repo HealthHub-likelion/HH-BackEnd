@@ -103,7 +103,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                     weight = set['weight'],
                 )
         
-        return Response({'response':True},status=status.HTTP_200_OK)
+        return Response({'response':True,'newRoutineid':new_routine.id,'newRoutineCount':new_routine.count},status=status.HTTP_200_OK)
 
     def update(self,request,pk):
         data = json.loads(request.body)
