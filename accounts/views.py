@@ -77,11 +77,17 @@ class MemberCheckViewSet(viewsets.ModelViewSet):
                 'isOpen':True
             }
             for routine in args['routines']:
+                recentRoutine = Record.objects.filter(member_id=args['find_member'].id,routine_id=routine.id)
+                if recentRoutine.exists():
+                    time = recentRoutine[0].create_time.strftime('%Y/%m/%d-%H:%M:%S')
+                else:
+                    time = None
                 routine_data = {
                     'routineId' : routine.id,
                     'routineName' : routine.routineName,
                     'routineCount' : routine.count,
                     'routineOpen' : routine.isOpen,
+                    'recentRoutine' : time
                 }
                 jsonData['routine'].append(routine_data)
             for record in args['records']:
@@ -161,11 +167,18 @@ class MemberSessionViewSet(viewsets.ModelViewSet):
             'recordTimeList':[]
         }
         for routine in routines:
+            recentRoutine = Record.objects.filter(member_id=member.id,routine_id=routine.id)
+            if recentRoutine.exists():
+                time = recentRoutine[0].create_time.strftime('%Y/%m/%d-%H:%M:%S')
+            else:
+                time = None
+
             routine_data = {
                 'routineId' : routine.id,
                 'routineName' : routine.routineName,
                 'routineCount' : routine.count,
-                'routineOpen' : routine.isOpen
+                'routineOpen' : routine.isOpen,
+                'recentRoutine' : time
             }
             jsonData['routine'].append(routine_data)
         for record in records:
