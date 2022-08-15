@@ -62,7 +62,9 @@ urlpatterns =[
     path('member/session',member_session),
     path('member/follow',follow),
     path('membersearchbynickname', member_search_by_nickname),
+    
     path('membersearchbykeyword', member_search_by_keyword),
+    
     path('updatereadme', member_update_readme),
     path('profileimage/upload', member_upload_profile_image),
     path('profileimage/delete', member_delete_profile_image),
