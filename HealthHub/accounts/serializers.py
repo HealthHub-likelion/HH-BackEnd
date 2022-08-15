@@ -42,3 +42,4 @@ class MemberSearchByKeyword(serializers.ModelSerializer):
     class Meta:
         model = Member
         feilds = ['nickname']
+        

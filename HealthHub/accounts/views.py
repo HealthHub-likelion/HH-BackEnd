@@ -1,6 +1,7 @@
 from ast import arg
 import stat
 from telnetlib import STATUS
+from urllib import response
 from urllib.request import install_opener
 from xmlrpc.client import ResponseError
 from django.shortcuts import get_object_or_404, render
@@ -226,7 +227,9 @@ class MemberFollowViewSet(viewsets.ModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    
+
+
+52-1
 class MemberSearchByNicknameViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSearchByNicknameSerializer
@@ -250,7 +253,30 @@ class MemberSearchByNicknameViewSet(viewsets.ModelViewSet):
         else:
             return Response({'response':'유효하지 않은 인자가 요청되었습니다.'},status = status.HTTP_400_BAD_REQUEST)
         
-
+#52-2
+class MemberSearchByKeyword(viewsets.ModelViewSet):
+    serializer_class = MemberSerializer
+    def search_by_keyword(self, request):
+        try:
+            print(request.data['keyword'])
+            keyword = request.data['keyword']
+            members_data = {}
+            members = Member.objects.all()
+            
+            for member in members:
+                if member in keyword:
+                    row = { "img" : member.img, "name" : member.name }
+                    members_data.update(row)
+            
+            print(members_data)
+            
+            response_data = {"Member" : { members_data }}
+            print(response_data)
+            return Response(response_data,status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            print(e)
+            return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
 
 #31
 class MemberUpdateReadmeViewSet(viewsets.ModelViewSet):
@@ -328,3 +354,4 @@ class MemberDeleteProfileImage(viewsets.ModelViewSet):
         except Exception as e:
             print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+        
