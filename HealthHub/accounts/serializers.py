@@ -31,7 +31,7 @@ class MemberUpdateReadmeSerializer(serializers.ModelSerializer):
 class MemberGetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model=Member
-        fields = None
+        fields = ['nickname', 'img', 'email']
         
 class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
