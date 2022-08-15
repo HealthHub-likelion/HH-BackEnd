@@ -1,3 +1,4 @@
+from dataclasses import field
 from .models import Member, Follow
 from rest_framework import serializers
 
@@ -36,3 +37,8 @@ class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model=Member
         fields = ['img']
+        
+class MemberSearchByKeyword(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        feilds = ['nickname']
