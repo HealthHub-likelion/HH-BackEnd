@@ -229,7 +229,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
 
 
-52-1
+#52-1
 class MemberSearchByNicknameViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSearchByNicknameSerializer
