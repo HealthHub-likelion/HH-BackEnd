@@ -219,7 +219,7 @@ class MemberFollowViewSet(viewsets.ModelViewSet):
             follow_list = self.queryset.filter(follower_id = member.id) 
             for follow in follow_list:
                 follow_member = self.m_queryset.get(nickname=follow.following_id)
-                json['Member'].append({'name':follow_member.nickname,'img':follow_member.img.url})
+                json['Member'].append({'name':follow_member.nickname,'img':follow_member.img.url,'isFollow':True})
         else:
             return Response({'response':False},status=status.HTTP_400_BAD_REQUEST)
         return Response(json,status=status.HTTP_200_OK)
