@@ -2,7 +2,7 @@ from urllib import response
 from django.shortcuts import render
 from itsdangerous import Serializer
 
-from exercise.models import Routine
+from exercise.models import Routine, RoutineExercise, Set
 from .models import Record
 from accounts.models import Member,Follow
 from .serializers import RecordSerializer,MemberForRoutineSerializer
@@ -115,3 +115,24 @@ class ymFollowingRecordListViewSet(viewsets.ModelViewSet):
 
         # print(myres)
         return Response(myres,status=status.HTTP_200_OK)
+
+class RecordRoutineViewSet(viewsets.ModelViewSet):
+    queryset = Record.objects.all()
+
+    def view_routineByRecord(self,request):
+        member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+        records = self.queryset.filter(member_id = member.id)
+        result = []
+        for record in records:
+            recordData = {}
+            routine = record.routine_id
+            routine_exercises = RoutineExercise.objects.filter(routine_id = routine.id)
+            all_weight = 0
+            for routine_exercise in routine_exercises:
+                sets = Set.objects.filter(routine_exercise_id = routine_exercise.id)
+                for set in sets:
+                    all_weight += (set.count * set.weight)
+            recordData['allWeight'] = all_weight
+            recordData['time'] = record.create_time.strftime('%Y/%m/%d-%H:%M:%S')
+            result.append(recordData)
+        return Response(result,status=status.HTTP_200_OK)
