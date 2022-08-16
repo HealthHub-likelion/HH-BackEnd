@@ -39,6 +39,11 @@ routine_fork = ymRoutineForkViewSet.as_view({
     'post':'update',
 })
 
+#루틴 이름 비교 
+routine_compare = ymRoutineViewSet.as_view({
+    'post': 'compare',
+})
+
 re = ymRoutineExerciseViewSet.as_view({
     'get': 'list',
     'post': 'create',
@@ -58,6 +63,7 @@ urlpatterns =[
     path('routine/<int:pk>/detail/', routine_detail),
     path('routine/<int:pk>/', routin_one),
     path('routine/<int:pk>/fork/', routine_fork),
+    path('routine/compare/', routine_compare),
     path('re/', re),
     path('set/', set),
 ]

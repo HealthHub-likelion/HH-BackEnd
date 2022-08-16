@@ -8,6 +8,7 @@ import json
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import generics, status
+from django.db.models import Q
 
 
 class ymExerciseList(generics.ListAPIView):
@@ -53,6 +54,21 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
         # print(data)
 
         return Response(data,status=status.HTTP_200_OK)
+    #루틴 이름 비교    
+    def compare(self, request):
+        data = json.loads(request.body)
+        # print(data)
+        q = Q(member_id = data["member_id"])
+        q.add(Q(routineName = data["routineName"]),q.AND)
+        routines = Routine.objects.filter(q) 
+        rc = routines.count()
+        # print(rc)
+        if rc > 0:
+            return Response({'isSame':True},status=status.HTTP_200_OK)
+        else: 
+            return Response({'isSame':False},status=status.HTTP_200_OK)
+
+
 
 
     #루틴 하나 예쁘게 전달
