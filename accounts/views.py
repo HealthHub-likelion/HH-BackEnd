@@ -26,6 +26,14 @@ class MemberViewSet(viewsets.ModelViewSet):
             img = 'images/HH_logo.jpg'
         )
         return Response({'response':True},status=status.HTTP_200_OK)
+    #닉네임 수정
+    def partial_update(self,request,pk):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({'response':True},status=status.HTTP_200_OK)
 
 
 
