@@ -26,6 +26,14 @@ class MemberViewSet(viewsets.ModelViewSet):
             img = 'images/HH_logo.jpg'
         )
         return Response({'response':True},status=status.HTTP_200_OK)
+    #닉네임 수정
+    def partial_update(self,request,pk):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({'response':True},status=status.HTTP_200_OK)
 
 
 
@@ -196,14 +204,15 @@ class MemberFollowViewSet(viewsets.ModelViewSet):
         name = request.data['name']
         following_member = get_object_or_404(self.m_queryset,nickname=name)
         member = get_object_or_404(self.m_queryset,token=header)
-        Follow.objects.create(
-            following_id = following_member,
-            follower_id = member
-        )
+        if not Follow.objects.filter(following_id = following_member.id, follower_id = member.id).exists():
+            Follow.objects.create(
+                following_id = following_member,
+                follower_id = member
+            )
         return Response({'response':True},status=status.HTTP_200_OK)
 
     def unfollow_member(self, request):
-        header = request.META['HTTP_AUTHORIZATION']
+        header = request.META.get('HTTP_AUTHORIZATION')
         name = request.data['name']
         following_member = get_object_or_404(self.m_queryset,nickname=name)
         member = get_object_or_404(self.m_queryset,token=header)
