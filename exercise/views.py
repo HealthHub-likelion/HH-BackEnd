@@ -38,6 +38,8 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
         data = serializer.data
         routine_idx = 0
         for routine in data:
+            create_member = Member.objects.get(id =data[routine_idx]["creator_id"])
+            data[routine_idx]["creatorName"]= create_member.nickname
             ex_list = routine["re_routine"]
             ex_idx = 0
             for exercise in ex_list:
@@ -48,7 +50,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                 data[routine_idx]["re_routine"][ex_idx]["exercise_en_name"] = en_name
                 ex_idx +=1
             routine_idx +=1
-        print(data)
+        # print(data)
 
         return Response(data,status=status.HTTP_200_OK)
 
@@ -58,6 +60,8 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         data = self.serializer_class(instance).data
         # print(self.serializer_class(instance).data)
+        create_member = Member.objects.get(id =data["creator_id"])
+        data["creatorName"]= create_member.nickname
         routine_list = data["re_routine"]
         idx = 0
         for routine in routine_list:
@@ -78,7 +82,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
         #루틴 만들기
         new_routine = Routine.objects.create(
             member_id = member,
-            creatorName = member.nickname,
+            creator_id = member,
             routineName = data['routineName'],
             isOpen = data['isOpen'],
             count = 0
@@ -104,7 +108,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
                 )
         
         return Response({'response':True,'newRoutineid':new_routine.id,'newRoutineCount':new_routine.count},status=status.HTTP_200_OK)
-
+    #루틴 수정
     def update(self,request,pk):
         data = json.loads(request.body)
         #멤버 정보
@@ -115,7 +119,7 @@ class ymRoutineViewSet(viewsets.ModelViewSet):
         #새 루틴 만들기
         new_routine = Routine.objects.create(
             member_id = member,
-            creatorName = member.nickname,
+            creator_id = routine_obj.creator_id, #기존 출처 그대로
             routineName = data['routineName'],
             isOpen = data['isOpen'],
             count = routine_obj.count #기존 루틴 카운트 그대로
@@ -171,15 +175,17 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
 
     def update(self,request,pk):
         # data = json.loads(request.header)
-        print(request.META.get('HTTP_AUTHORIZATION'))
+        # print(request.META.get('HTTP_AUTHORIZATION'))
         
         member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
         
         oriroutine = Routine.objects.get(id = pk)
+
+        creator = Member.objects.get(id = oriroutine.creator_id.id)
         #루틴 복사
         newroutine = Routine.objects.create(
             member_id = member,#본인 
-            creatorName = oriroutine.creatorName, #출처 닉네임
+            creator_id = creator, #출처 멤버
             routineName = oriroutine.routineName,
             count = 0,
             isOpen = True
