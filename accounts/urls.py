@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet, MemberFollowViewSet, MemberSearchByNicknameViewSet, MemberUpdateReadmeViewSet, MemberUpdateReadmeViewSet, MemberGetSettingOption, MemberUploadProfileImage, MemberDeleteProfileImage, MemberCheckViewSet
+from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet, MemberFollowViewSet, MemberSearchByNicknameViewSet, MemberUpdateReadmeViewSet, MemberUpdateReadmeViewSet, MemberGetSettingOption, MemberUploadProfileImage, MemberDeleteProfileImage, MemberCheckViewSet,FollowViewSet
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
@@ -27,8 +27,7 @@ member_session = MemberSessionViewSet.as_view({
 
 follow = MemberFollowViewSet.as_view({
     'get' : 'show_follow',
-    'post' : 'follow_member',
-    'delete' : 'unfollow_member'
+    'post' : 'follow_member'
 })
 
 member_search_by_nickname = MemberSearchByNicknameViewSet.as_view({
@@ -56,6 +55,10 @@ member_nickname_update = MemberViewSet.as_view({
     'post' : 'partial_update'
 })
 
+unfollow = FollowViewSet.as_view({
+    'post' : 'unfollow_member'
+})
+
 
 urlpatterns =[
     path('', member),
@@ -68,4 +71,5 @@ urlpatterns =[
     path('profileimage/upload', member_upload_profile_image),
     path('profileimage/delete', member_delete_profile_image),
     path('getsettingoption', member_get_setting_option),
+    path('member/unfollow',unfollow)
 ]
