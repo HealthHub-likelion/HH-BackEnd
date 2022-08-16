@@ -51,10 +51,16 @@ member_get_setting_option = MemberGetSettingOption.as_view({
     'get' : 'get_setting_option'
 })
 
+member_nickname_update = MemberViewSet.as_view({
+    'get': 'retrieve',
+    'post' : 'partial_update'
+})
+
 
 urlpatterns =[
     path('', member),
     path('member/',member_check),
+    path('member/<int:pk>/', member_nickname_update),
     path('member/session',member_session),
     path('member/follow',follow),
     path('membersearchbynickname', member_search_by_nickname),

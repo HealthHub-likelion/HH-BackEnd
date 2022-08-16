@@ -33,7 +33,7 @@ class RoutineSerializer(serializers.ModelSerializer):
     class Meta:
         model=Routine
         fields= ('id')
-        fields= ('id','creatorName','routineName','isOpen','member_id','count','re_routine')
+        fields= ('id','creator_id','routineName','isOpen','member_id','count','re_routine')
     
 class RoutineOnlySerializer(serializers.ModelSerializer):
     class Meta:
