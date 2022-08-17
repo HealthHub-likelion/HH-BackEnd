@@ -340,6 +340,10 @@ class MemberUploadProfileImage(viewsets.ModelViewSet):
         except Exception as e:
             print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+        
+    def perform_create(self, serializer):
+        serializer.validated_data['img'].name = serializer.validated_data['nickname'].name
+        serializer.save()
 
 #46
 class MemberDeleteProfileImage(viewsets.ModelViewSet):
