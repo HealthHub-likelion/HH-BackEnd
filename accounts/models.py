@@ -1,6 +1,9 @@
 from email.policy import default
 from django.db import models
 
+def user_directory_path(instance, filename):
+        return 'images/{0}'.format(instance.nickname + "_" + filename)
+
 # Create your models here.
 class Member(models.Model):
     id = models.AutoField(primary_key=True)
@@ -10,7 +13,7 @@ class Member(models.Model):
     password = models.CharField(max_length=20)
     token =  models.CharField(max_length=255)
     isOpen = models.BooleanField(default=True)
-    img = models.ImageField(default='default',blank=True, upload_to="images/", null=True)
+    img = models.ImageField(default='default',blank=True, upload_to = user_directory_path, null=True)
 
     def __str__(self):
         return str(self.nickname)
