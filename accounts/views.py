@@ -102,6 +102,7 @@ class MemberCheckViewSet(viewsets.ModelViewSet):
                 jsonData['recordTimeList'].append(record.create_time.strftime('%Y-%m-%d'))
         else:
             jsonData = {
+                'img' : args['find_member'].img.url,
                 'followerCount':args['followers'].count(),
                 'followingCount':args['followings'].count(),
                 'isFollow':isFollow,
