@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet, MemberFollowViewSet, MemberSearchByNicknameViewSet, MemberUpdateReadmeViewSet, MemberUpdateReadmeViewSet, MemberGetSettingOption, MemberUploadProfileImage, MemberDeleteProfileImage, MemberCheckViewSet,FollowViewSet
+from .views import MemberViewSet, MemberCheckViewSet, MemberSessionViewSet, MemberFollowViewSet, MemberSearchByNicknameViewSet, MemberUpdateReadmeViewSet, MemberUpdateReadmeViewSet, MemberGetSettingOption, MemberUploadProfileImage, MemberDeleteProfileImage, MemberCheckViewSet,FollowViewSet, MemberSearchByKeyword
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
@@ -32,6 +32,10 @@ follow = MemberFollowViewSet.as_view({
 
 member_search_by_nickname = MemberSearchByNicknameViewSet.as_view({
     'post': 'search_nickname',
+})
+
+member_search_by_keyword = MemberSearchByKeyword.as_view({
+    'post': 'search_by_keyword',
 })
 
 member_update_readme = MemberUpdateReadmeViewSet.as_view({
@@ -67,6 +71,7 @@ urlpatterns =[
     path('member/session',member_session),
     path('member/follow',follow),
     path('membersearchbynickname', member_search_by_nickname),
+    path('membersearchbykeyword', member_search_by_keyword),
     path('updatereadme', member_update_readme),
     path('profileimage/upload', member_upload_profile_image),
     path('profileimage/delete', member_delete_profile_image),
