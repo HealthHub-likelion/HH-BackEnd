@@ -341,7 +341,6 @@ class MemberUploadProfileImage(viewsets.ModelViewSet):
             print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
 
-
 #46
 class MemberDeleteProfileImage(viewsets.ModelViewSet):
     serializer_class = MemberGetTokenSerializer
@@ -354,3 +353,29 @@ class MemberDeleteProfileImage(viewsets.ModelViewSet):
         except Exception as e:
             print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+        
+        
+#52-2
+class MemberSearchByKeyword(viewsets.ModelViewSet):
+    serializer_class = MemberSerializer
+    def search_by_keyword(self, request):
+        try:
+            print(request.data['keyword'])
+            keyword = request.data['keyword']
+            dict_data = {'Member':[]}
+            members = Member.objects.all()
+            print(type(members))
+            for member in members:
+                if keyword in member.nickname:
+                    print("이 닉네임 : ", member.nickname)
+                    dict_data['Member'].append({'name':member.nickname,'img':str(member.img)})
+            
+            json_data = json.dumps(dict_data)
+            
+            print("타입은 ", type(json_data))
+            #return Response(json_data,status=status.HTTP_200_OK)
+            return Response(dict_data,status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            print("\n\n\n\n", e, "전송됨")
+            return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
