@@ -213,10 +213,11 @@ class MemberFollowViewSet(viewsets.ModelViewSet):
 
     def show_follow(self, request):
         query = request.GET.get('who', None)
+        nickname = request.GET.get('name')
         json = {'Member':[]}
         if query == 'follower':
             header = request.META.get('HTTP_AUTHORIZATION')
-            member = get_object_or_404(self.m_queryset,token = header)
+            member = get_object_or_404(self.m_queryset,nickname = nickname)
             follow_list = self.queryset.filter(following_id = member.id) 
             for follow in follow_list:
                 follow_member = self.m_queryset.get(nickname=follow.follower_id)
@@ -224,7 +225,7 @@ class MemberFollowViewSet(viewsets.ModelViewSet):
                 json['Member'].append({'id':follow.id,'name':follow_member.nickname,'img':follow_member.img.url,'isFollow':isFollow})
         elif query == 'following':
             header = request.META.get('HTTP_AUTHORIZATION')
-            member = get_object_or_404(self.m_queryset,token = header)
+            member = get_object_or_404(self.m_queryset,nickname = nickname)
             follow_list = self.queryset.filter(follower_id = member.id) 
             for follow in follow_list:
                 follow_member = self.m_queryset.get(nickname=follow.following_id)
