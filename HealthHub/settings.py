@@ -146,7 +146,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = "https://port-0-hh-backend-5cw30n24l6z11xc4.gksl1.cloudtype.app/media/"
+MEDIA_ROOT = "/var/https://port-0-hh-backend-5cw30n24l6z11xc4.gksl1.cloudtype.app/media/"
 MEDIA_URL = 'https://port-0-hh-backend-5cw30n24l6z11xc4.gksl1.cloudtype.app/media/'
 RECORD_MEDIA_ROOT = os.path.join(BASE_DIR, 'record/media')
 RECORD_MEDIA_URL = '/record/media/'
