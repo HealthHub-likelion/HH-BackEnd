@@ -350,8 +350,6 @@ class MemberDeleteProfileImage(viewsets.ModelViewSet):
         try:
             member = Member.objects.get(token=request.META.get('HTTP_AUTHORIZATION'))
             file_path = str(member.img)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
             member.img = "images/HH_logo.jpg"
             member.save()
             return Response({'response' : True}, status=status.HTTP_200_OK)
