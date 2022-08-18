@@ -1,6 +1,7 @@
 from itertools import count
 from django.db import models
 from numpy import integer
+from sqlalchemy import null
 
 # Create your models here.
 class Routine(models.Model):
@@ -10,6 +11,7 @@ class Routine(models.Model):
     routineName = models.CharField(max_length=20)
     isOpen = models.BooleanField()
     count = models.IntegerField(default=0)
+    origin_id = models.CharField(max_length=10,default='null')
 
 
 class Exercise(models.Model):

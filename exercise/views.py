@@ -196,32 +196,41 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
         member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
         
         oriroutine = Routine.objects.get(id = pk)
+        
+        check= Routine.objects.filter(member_id=member,origin_id=pk)
 
         creator = Member.objects.get(id = oriroutine.creator_id.id)
-        #루틴 복사
-        newroutine = Routine.objects.create(
-            member_id = member,#본인 
-            creator_id = creator, #출처 멤버
-            routineName = oriroutine.routineName,
-            count = 0,
-            isOpen = True
-        )
-        re_obj_list = RoutineExercise.objects.filter(routine_id = pk)
-        #루틴-운동 복사 / 세트 복사
-        for re_obj in re_obj_list:
-            ex_obj = Exercise.objects.get(id = re_obj.exercise_id.id)
-            set_obj_list = Set.objects.filter(routine_exercise_id=re_obj.id)
-            new_re_obj = RoutineExercise.objects.create(
-                routine_id = newroutine,#새로운 루틴_id
-                exercise_id = ex_obj#기존 운동_id
-            )
-            for set_obj in set_obj_list:
-                new_set = Set.objects.create(
-                    routine_exercise_id = new_re_obj,
-                    count = set_obj.count,
-                    weight = set_obj.weight
+        try:
+            if check:
+                return Response({'response':False},status=status.HTTP_400_BAD_REQUEST)
+            else:
+                 #루틴 복사
+                newroutine = Routine.objects.create(
+                    member_id = member,#본인 
+                    creator_id = creator, #출처 멤버
+                    routineName = oriroutine.routineName,
+                    count = 0,
+                    origin_id=pk,
+                    isOpen = True
                 )
-        return Response({'response':True},status=status.HTTP_200_OK)     
+                re_obj_list = RoutineExercise.objects.filter(routine_id = pk)
+                #루틴-운동 복사 / 세트 복사
+                for re_obj in re_obj_list:
+                    ex_obj = Exercise.objects.get(id = re_obj.exercise_id.id)
+                    set_obj_list = Set.objects.filter(routine_exercise_id=re_obj.id)
+                    new_re_obj = RoutineExercise.objects.create(
+                        routine_id = newroutine,#새로운 루틴_id
+                        exercise_id = ex_obj#기존 운동_id
+                    )
+                    for set_obj in set_obj_list:
+                        new_set = Set.objects.create(
+                            routine_exercise_id = new_re_obj,
+                            count = set_obj.count,
+                            weight = set_obj.weight
+                        )
+                return Response({'response':True},status=status.HTTP_200_OK)
+        except KeyError:
+            return Response({'response':'error'},status=status.HTTP_400_BAD_REQUEST)
 
 
 
