@@ -1,5 +1,5 @@
 from urllib import response
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from itsdangerous import Serializer
 
 from exercise.models import Routine, RoutineExercise, Set
@@ -23,6 +23,8 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        data = serializer.data
+        record_id = data["id"]
 
         #루틴 count 올려주기
         # data = json.loads(data)
@@ -32,7 +34,15 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         routine_obj.count +=1
         routine_obj.save()
         
-        return Response({'response':True}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({'response':True,'record_id':record_id}, status=status.HTTP_201_CREATED, headers=headers)
+    #이미지 수정
+    def partial_update(self,request,pk):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({'response':True},status=status.HTTP_200_OK)
     
 class ymMyRecordListViewSet(viewsets.ModelViewSet):
     serializer_class = MemberForRoutineSerializer
