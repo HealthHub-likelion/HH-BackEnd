@@ -10,7 +10,8 @@ record = ymRecordViewSet.as_view({
     'get':'list',
     'post': 'create',
 })
-#기록 수정/삭제
+
+#기록 수정=>(이미지 업로드) /삭제
 #삭제 -> routine count 빼주기 todo
 record_detail = ymRecordViewSet.as_view({
     'get':'retrieve',
@@ -33,6 +34,7 @@ recordByRoutine = RecordRoutineViewSet.as_view({
 
 urlpatterns =[
     path('',record),
+    # path('img/',record_image),
     path('mylist/',record_list),
     path('followinglist/',record_list2),
     path('<int:pk>/',record_detail),
