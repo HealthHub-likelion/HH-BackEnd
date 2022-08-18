@@ -38,5 +38,6 @@ six==1.16.0
 sniffio==1.2.0
 soupsieve==2.3.2.post1
 sqlparse==0.4.2
+SQLAlchemy==1.4.40
 urllib3==1.26.9
 validus==0.3.0
