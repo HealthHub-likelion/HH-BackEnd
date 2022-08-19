@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+SITE_ID=1
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
