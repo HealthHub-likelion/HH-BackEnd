@@ -68,7 +68,6 @@ class MemberCheckViewSet(viewsets.ModelViewSet):
             return Response(status.HTTP_404_NOT_FOUND)
 
     def make_jsonData(self,isPublic,isFollow,args):
-        print(isPublic)
         if isPublic:
             #이미지 경로를 url로 안보내고 그냥 값으로 보내면 decode 오류 발생!! 주의!!
             jsonData = {
@@ -260,7 +259,6 @@ class MemberSearchByNicknameViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSearchByNicknameSerializer
     
     def search_nickname(self, request):
-        print("\n\n\n", request.data, "\n\n\n")
         
         searched_member = Member.objects.get(nickname=request.data['nickname'])
         print(searched_member)
@@ -269,8 +267,6 @@ class MemberSearchByNicknameViewSet(viewsets.ModelViewSet):
             if(searched_member != None ):
                 nickname = searched_member.nickname
                 img_path = str(searched_member.img)
-                
-                print("\n\n\n\n\n",img_path, " \n\n\n\n\n\n")
                 return Response({'Member':{
                     'name' : nickname,
                     'img' : img_path
@@ -285,13 +281,11 @@ class MemberUpdateReadmeViewSet(viewsets.ModelViewSet):
     serializer_class = MemberUpdateReadmeSerializer
     def update_readme(self, request):
         try:
-            print(request.data['readMe'])
             member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
             member.readMe = request.data['readMe']
             member.save()
             return Response({'response':True},status=status.HTTP_200_OK)
         except Exception as e:
-            print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
 
 
@@ -306,17 +300,10 @@ class MemberGetSettingOption(viewsets.ModelViewSet):
             img = str(member.img)
             nickname = member.nickname
             isOpen = member.isOpen
-            
-            print("\n\n\n전송 완료\n\n\n")
-            
-            
             data = {'status' : { 'image' : {img}, 'name' : {nickname}, 'isOpen' : {isOpen} }}
-            print("data : ",type(data))
-            print(data)
             
             return Response(data, status = status.HTTP_200_OK)
         except Exception as e:
-            print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
             
 
@@ -330,7 +317,6 @@ class MemberUploadProfileImage(viewsets.ModelViewSet):
             member.save()
             return Response({'response' : str(member.img)}, status=status.HTTP_200_OK)
         except Exception as e:
-            print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
     
     def delete_profile_image(self, request):
@@ -340,7 +326,6 @@ class MemberUploadProfileImage(viewsets.ModelViewSet):
             member.save()
             return Response({'response' : True}, status=status.HTTP_200_OK)
         except Exception as e:
-            print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
 
 #46
@@ -354,7 +339,6 @@ class MemberDeleteProfileImage(viewsets.ModelViewSet):
             member.save()
             return Response({'response' : True}, status=status.HTTP_200_OK)
         except Exception as e:
-            print("\n\n\n", e, "\n\n\n")
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
         
         
@@ -363,22 +347,17 @@ class MemberSearchByKeyword(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     def search_by_keyword(self, request):
         try:
-            print(request.data['keyword'])
             keyword = request.data['keyword']
             dict_data = {'Member':[]}
             members = Member.objects.all()
-            print(type(members))
             for member in members:
                 if keyword in member.nickname:
-                    print("이 닉네임 : ", member.nickname)
                     dict_data['Member'].append({'name':member.nickname,'img':str(member.img)})
             
             json_data = json.dumps(dict_data)
             
-            print("타입은 ", type(json_data))
             #return Response(json_data,status=status.HTTP_200_OK)
             return Response(dict_data,status=status.HTTP_200_OK)
             
         except Exception as e:
-            print("\n\n\n\n", e, "전송됨")
             return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
