@@ -200,14 +200,14 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
         check= Routine.objects.filter(member_id=member,origin_id=pk)
             
         check3 = Routine.objects.filter(member_id=member,origin_id=oriroutine.origin_id)
-
+        print(oriroutine.origin_id)
         creator = Member.objects.get(id = oriroutine.creator_id.id)
         try:
             if check:
                 return Response({'response':False},status=status.HTTP_400_BAD_REQUEST)
             else:
                  #루틴 복사
-                if oriroutine.origin_id!=null:
+                if oriroutine.origin_id!='null':
                     check2= Routine.objects.filter(member_id=member,id=oriroutine.origin_id)
                     if check2:
                         return Response({'response':False},status=status.HTTP_400_BAD_REQUEST)
