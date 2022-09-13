@@ -1,5 +1,7 @@
 from ast import arg
 import stat
+import re
+import bcrypt
 from telnetlib import STATUS
 from urllib.request import install_opener
 from xmlrpc.client import ResponseError
@@ -19,10 +21,14 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
 
     def create_member(self,request):
+        password = request.data['password']
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        decode_password = hashed_password.decode('utf-8')
+        
         Member.objects.create(
             email = request.data['email'],
             nickname = request.data['name'],
-            password = request.data['password'],
+            password = decode_password,
             img = 'images/HH_logo.jpg'
         )
         return Response({'response':True},status=status.HTTP_200_OK)
