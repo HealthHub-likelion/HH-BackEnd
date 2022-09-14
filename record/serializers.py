@@ -23,3 +23,13 @@ class MemberForRoutineSerializer(serializers.ModelSerializer):
         model=Member
         fields= ('id','nickname','img','routine_member','isOpen')
 
+class MemberForRecordSerializer(serializers.ModelSerializer):
+    record_member = RecordSerializer(many=True)
+    class Meta:
+        model=Member
+        fields= ('id','nickname','img','record_member','isOpen')
+
+
+
+#멤버 <- 루틴 <- 레코드
+#멤버 <- 레코드, 루틴 아이디 이용해서 루틴 정보 받아오기. 
