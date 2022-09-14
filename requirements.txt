@@ -41,3 +41,6 @@ sqlparse==0.4.2
 SQLAlchemy==1.4.40
 urllib3==1.26.9
 validus==0.3.0
+boto3==1.24.72
+django-storages==1.13.1
+bcrypt==4.0.0

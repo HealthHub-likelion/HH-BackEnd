@@ -321,7 +321,7 @@ class MemberUploadProfileImage(viewsets.ModelViewSet):
             member = Member.objects.get(token=request.META.get('HTTP_AUTHORIZATION'))
             member.img = request.data['img']
             member.save()
-            return Response({'response' : str(member.img)}, status=status.HTTP_200_OK)
+            return Response({'response' : 'https://hh-image-storage.s3.ap-northeast-2.amazonaws.com/' + str(member.img)}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'response':False},status.HTTP_400_BAD_REQUEST)
     

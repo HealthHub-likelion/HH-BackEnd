@@ -13,7 +13,7 @@ class Member(models.Model):
     password = models.TextField()
     token =  models.CharField(max_length=255)
     isOpen = models.BooleanField(default=True)
-    img = models.ImageField(default='default',blank=True, upload_to = user_directory_path, null=True)
+    img = models.ImageField(default='default',blank=True, upload_to = '', null=True)
 
     def __str__(self):
         return str(self.nickname)
