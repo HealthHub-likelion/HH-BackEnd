@@ -1,7 +1,6 @@
 from urllib import response
 from django.shortcuts import render
 from itsdangerous import Serializer
-from sqlalchemy import null
 from .models import Exercise,Routine,RoutineExercise,Set
 from accounts.models import Member
 from .serializers import ExerciseSerializer,RoutineSerializer,RoutineExerciseSerializer,SetSerializer,RoutineOnlySerializer,RoutineExerciseOnlySerializer

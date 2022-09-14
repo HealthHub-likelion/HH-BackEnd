@@ -1,7 +1,6 @@
 from itertools import count
 from django.db import models
 from numpy import integer
-from sqlalchemy import null
 
 # Create your models here.
 class Routine(models.Model):
