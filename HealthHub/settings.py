@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'exercise',
     'record',
 
-    'storages'
+    'storages',
+    'sslserver'
 ]
 
 MIDDLEWARE = [
