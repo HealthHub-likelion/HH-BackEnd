@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymExerciseList,ymRoutineViewSet,ymRoutineExerciseViewSet,ymSetViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet,RoutineSerializer,ymExerciseViewSet
+from .views import ymExerciseList,ymRoutineViewSet,ymRoutineDetailViewSet,ymRoutineForkViewSet,RoutineSerializer,ymExerciseViewSet
 
 router = DefaultRouter()
 # 첫 번째 인자는 url의 prefix
@@ -44,17 +44,17 @@ routine_compare = ymRoutineViewSet.as_view({
     'post': 'compare',
 })
 
-re = ymRoutineExerciseViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-    'delete': 'destroy',
-})
+# re = ymRoutineExerciseViewSet.as_view({
+#     'get': 'list',
+#     'post': 'create',
+#     'delete': 'destroy',
+# })
 
-set = ymSetViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-    'delete': 'destroy',
-})
+# set = ymSetViewSet.as_view({
+#     'get': 'list',
+#     'post': 'create',
+#     'delete': 'destroy',
+# })
 
 urlpatterns =[
     path('',exercise),
@@ -64,6 +64,6 @@ urlpatterns =[
     path('routine/<int:pk>/', routin_one),
     path('routine/<int:pk>/fork/', routine_fork),
     path('routine/compare/', routine_compare),
-    path('re/', re),
-    path('set/', set),
+    # path('re/', re),
+    # path('set/', set),
 ]

@@ -269,10 +269,10 @@ class ymRoutineForkViewSet(viewsets.ModelViewSet):
 
 
 
-class ymRoutineExerciseViewSet(viewsets.ModelViewSet):
-    queryset = RoutineExercise.objects.all()
-    serializer_class = RoutineExerciseOnlySerializer
+# class ymRoutineExerciseViewSet(viewsets.ModelViewSet):
+#     queryset = RoutineExercise.objects.all()
+#     serializer_class = RoutineExerciseOnlySerializer
 
-class ymSetViewSet(viewsets.ModelViewSet):
-    queryset = Set.objects.all()
-    serializer_class = SetSerializer
+# class ymSetViewSet(viewsets.ModelViewSet):
+#     queryset = Set.objects.all()
+#     serializer_class = SetSerializer

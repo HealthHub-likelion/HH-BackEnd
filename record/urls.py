@@ -11,11 +11,9 @@ record = ymRecordViewSet.as_view({
     'post': 'create',
 })
 
-#기록 수정=>(이미지 업로드) /삭제
-#삭제 -> routine count 빼주기 todo
+#기록 수정=>(이미지 업로드)
 record_detail = ymRecordViewSet.as_view({
     'get':'retrieve',
-    'delete': 'destroy',
     'post': 'partial_update'
 })
 

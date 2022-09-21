@@ -10,18 +10,18 @@ class RecordSerializer(serializers.ModelSerializer):
         model=Record
         fields= '__all__'
 
-class RoutineForRecordSerializer(serializers.ModelSerializer):
-    record_routine = RecordSerializer(many=True)
-    class Meta:
-        model=Routine
-        fields= ('id','routineName','record_routine','isOpen')
+# class RoutineForRecordSerializer(serializers.ModelSerializer):
+#     record_routine = RecordSerializer(many=True)
+#     class Meta:
+#         model=Routine
+#         fields= ('id','routineName','record_routine','isOpen')
 
-class MemberForRoutineSerializer(serializers.ModelSerializer):
-    routine_member = RoutineForRecordSerializer(many=True)
-    # record_member = RecordSerializer(many=True)
-    class Meta:
-        model=Member
-        fields= ('id','nickname','img','routine_member','isOpen')
+# class MemberForRoutineSerializer(serializers.ModelSerializer):
+#     routine_member = RoutineForRecordSerializer(many=True)
+#     # record_member = RecordSerializer(many=True)
+#     class Meta:
+#         model=Member
+#         fields= ('id','nickname','img','routine_member','isOpen')
 
 class MemberForRecordSerializer(serializers.ModelSerializer):
     record_member = RecordSerializer(many=True)

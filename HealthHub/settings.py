@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'record',
 
     'storages',
-    'sslserver'
+    'sslserver',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
