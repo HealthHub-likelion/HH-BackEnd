@@ -5,7 +5,7 @@ from itsdangerous import Serializer
 from exercise.models import Routine, RoutineExercise, Set
 from .models import Record
 from accounts.models import Member,Follow
-from .serializers import RecordSerializer,MemberForRoutineSerializer,MemberForRecordSerializer
+from .serializers import RecordSerializer,MemberForRecordSerializer
 import json
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -45,7 +45,7 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         return Response({'response':True},status=status.HTTP_200_OK)
     
 class ymMyRecordListViewSet(viewsets.ModelViewSet):
-    serializer_class = MemberForRoutineSerializer
+    serializer_class = MemberForRecordSerializer
     # queryset = Member.objects.all()
 
     def list(self,request):
@@ -88,7 +88,7 @@ class ymMyRecordListViewSet(viewsets.ModelViewSet):
 
 
 class ymFollowingRecordListViewSet(viewsets.ModelViewSet):
-    serializer_class = MemberForRoutineSerializer
+    serializer_class = MemberForRecordSerializer
 
 #todo
     def list(self,request):

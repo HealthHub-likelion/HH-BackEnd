@@ -1,3 +1,5 @@
 *mysettings.py
 *.sqlite3
 .env
+django.crt
+django.key
