@@ -9,12 +9,14 @@ from django.shortcuts import get_object_or_404, render
 from .models import Member, Follow
 from exercise.models import Routine
 from record.models import Record
-from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer, MemberSearchByNicknameSerializer, MemberUpdateReadmeSerializer, MemberUploadProfileImageSerializer, MemberGetTokenSerializer
+from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer, MemberSearchByNicknameSerializer, MemberUpdateReadmeSerializer, MemberUploadProfileImageSerializer, MemberGetTokenSerializer,MemberRankingeSerializer
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import filters
 from rest_framework.response import Response
 import secrets
 import json
+import datetime
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
@@ -367,3 +369,14 @@ class MemberSearchByKeyword(viewsets.ModelViewSet):
             
         except Exception as e:
             return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
+
+#랭킹(멤버 리스트 정렬):
+class MemberRankingViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberRankingeSerializer
+    filter_backends = [filters.OrderingFilter] 
+    # ordering_fields = ['-level','-record_day'] 
+    ordering = ['-level','-record_day']
+
+# def levelcheck():
+#     today = datetime.date.today()

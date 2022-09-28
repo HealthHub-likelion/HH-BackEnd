@@ -2,6 +2,7 @@ aiosmtplib==1.1.6
 anyio==3.6.1
 asgiref==3.5.2
 beautifulsoup4==4.11.1
+boto3==1.24.82
 certifi==2021.10.8
 cffi==1.15.0
 charset-normalizer==2.0.12

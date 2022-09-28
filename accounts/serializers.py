@@ -36,3 +36,8 @@ class MemberUploadProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model=Member
         fields = ['img']
+
+class MemberRankingeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Member
+        fields =['id','nickname', 'email','level','record_day']
