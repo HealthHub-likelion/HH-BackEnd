@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'django_apscheduler',
     
     'accounts',
     'exercise',
@@ -168,3 +169,6 @@ AWS_S3_SECURE_URLS = False
 
 RECORD_MEDIA_ROOT = os.path.join(BASE_DIR, 'record/media')
 RECORD_MEDIA_URL = '/record/media/'
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
+SCHEDULER_DEFAULT = True

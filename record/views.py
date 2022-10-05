@@ -42,46 +42,46 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         for record in records:
             recordTimeList.append(record.create_time.strftime('%Y/%m/%d'))
 
-        #파도 레벨
-        print(recordTimeList)
-        continue_day = 0
-        decreaseCount = 0
-        wave_level = 0
-        for i in range (29,-1,-1):
-            tempdate = datetime.date.today()-datetime.timedelta(days=i)
-            tempdate = tempdate.strftime('%Y/%m/%d')
-            # print("tempdate:",tempdate)
+        # #파도 레벨
+        # print(recordTimeList)
+        # continue_day = 0
+        # decreaseCount = 0
+        # wave_level = 0
+        # for i in range (29,-1,-1):
+        #     tempdate = datetime.date.today()-datetime.timedelta(days=i)
+        #     tempdate = tempdate.strftime('%Y/%m/%d')
+        #     # print("tempdate:",tempdate)
 
-            if(recordTimeList):
-                if tempdate in recordTimeList:
-                    if continue_day < 3:continue_day+=1
-                    decreaseCount=0
-                    wave_level+=1
-                else:
-                    continue_day = 0
-                    decreaseCount +=1
-                    if decreaseCount >= 7:
-                        if wave_level >0: 
-                            wave_level -1
-                        decreaseCount = 0
+        #     if(recordTimeList):
+        #         if tempdate in recordTimeList:
+        #             if continue_day < 3:continue_day+=1
+        #             decreaseCount=0
+        #             wave_level+=1
+        #         else:
+        #             continue_day = 0
+        #             decreaseCount +=1
+        #             if decreaseCount >= 7:
+        #                 if wave_level >0: 
+        #                     wave_level -1
+        #                 decreaseCount = 0
 
-        # print("wave_level",wave_level)
-        mem_obj.level = wave_level
+        # # print("wave_level",wave_level)
+        # mem_obj.level = wave_level
 
-        #연속일수 구하기
-        record_day = 0
-        idx = 0
-        while True:
-            tempdate = datetime.date.today()-datetime.timedelta(days=idx)#오늘부터 하루씩 뒤로
-            tempdate = tempdate.strftime('%Y/%m/%d')
-            if tempdate in recordTimeList:
-                record_day +=1
-                idx +=1
-            else:
-                break
-        # print("record_day",record_day)
-        mem_obj.record_day = record_day
-        mem_obj.save()
+        # #연속일수 구하기
+        # record_day = 0
+        # idx = 0
+        # while True:
+        #     tempdate = datetime.date.today()-datetime.timedelta(days=idx)#오늘부터 하루씩 뒤로
+        #     tempdate = tempdate.strftime('%Y/%m/%d')
+        #     if tempdate in recordTimeList:
+        #         record_day +=1
+        #         idx +=1
+        #     else:
+        #         break
+        # # print("record_day",record_day)
+        # mem_obj.record_day = record_day
+        # mem_obj.save()
         
 
 
