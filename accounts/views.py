@@ -2,6 +2,7 @@ from ast import arg
 import stat
 import re
 import bcrypt
+from .pagination import RankingPagination
 from telnetlib import STATUS
 from urllib.request import install_opener
 from xmlrpc.client import ResponseError
@@ -374,9 +375,22 @@ class MemberSearchByKeyword(viewsets.ModelViewSet):
 class MemberRankingViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberRankingeSerializer
+    pagination_class = RankingPagination
     filter_backends = [filters.OrderingFilter] 
     # ordering_fields = ['-level','-record_day'] 
     ordering = ['-level','-record_day']
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     # print(serializer.data)
+    #     return Response(serializer.data)
 
 def check():
     #모든 멤버에 대해서
