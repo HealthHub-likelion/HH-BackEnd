@@ -14,6 +14,8 @@ class Member(models.Model):
     token =  models.CharField(max_length=255)
     isOpen = models.BooleanField(default=True)
     img = models.ImageField(default='default',blank=True, upload_to = '', null=True)
+    level = models.IntegerField(default=0,null=True)
+    record_day = models.IntegerField(default=0,null=True)
 
     def __str__(self):
         return str(self.nickname)
