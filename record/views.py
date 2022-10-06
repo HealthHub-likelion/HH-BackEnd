@@ -11,6 +11,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import generics, status
 from django.db.models import Q
+import datetime
 
 class ymRecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
@@ -33,7 +34,59 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         routine_obj = Routine.objects.get(id = routine_id)
         routine_obj.count +=1
         routine_obj.save()
+        mem_id = data["member_id"]
+        mem_obj = Member.objects.get(id = mem_id)
+        #타임리스트 생성
+        records = Record.objects.filter(member_id=mem_id)
+        recordTimeList = []
+        for record in records:
+            recordTimeList.append(record.create_time.strftime('%Y/%m/%d'))
+
+        #파도 레벨
+        print(recordTimeList)
+        continue_day = 0
+        decreaseCount = 0
+        wave_level = 0
+        for i in range (29,-1,-1):
+            tempdate = datetime.date.today()-datetime.timedelta(days=i)
+            tempdate = tempdate.strftime('%Y/%m/%d')
+            # print("tempdate:",tempdate)
+
+            if(recordTimeList):
+                if tempdate in recordTimeList:
+                    if continue_day < 3:continue_day+=1
+                    decreaseCount=0
+                    wave_level+=1
+                else:
+                    continue_day = 0
+                    decreaseCount +=1
+                    if decreaseCount >= 7:
+                        if wave_level >0: 
+                            wave_level -1
+                        decreaseCount = 0
+
+        # print("wave_level",wave_level)
+        mem_obj.level = wave_level
+
+        #연속일수 구하기
+        record_day = 0
+        idx = 0
+        while True:
+            tempdate = datetime.date.today()-datetime.timedelta(days=idx)#오늘부터 하루씩 뒤로
+            tempdate = tempdate.strftime('%Y/%m/%d')
+            if tempdate in recordTimeList:
+                record_day +=1
+                idx +=1
+            else:
+                break
+        # print("record_day",record_day)
+        mem_obj.record_day = record_day
+        mem_obj.save()
         
+
+
+        #member record_day update
+
         return Response({'response':True,'record_id':record_id}, status=status.HTTP_201_CREATED, headers=headers)
     #이미지 수정
     def partial_update(self,request,pk):
@@ -43,6 +96,15 @@ class ymRecordViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
 
         return Response({'response':True},status=status.HTTP_200_OK)
+    
+    # 레벨 갱신
+    def level_update():
+        return
+
+    #연속일수 갱신
+    def record_day_update():
+        return
+
     
 class ymMyRecordListViewSet(viewsets.ModelViewSet):
     serializer_class = MemberForRecordSerializer
@@ -154,3 +216,24 @@ class RecordRoutineViewSet(viewsets.ModelViewSet):
             recordData['time'] = record.create_time.strftime('%Y/%m/%d-%H:%M:%S')
             result.append(recordData)
         return Response(result,status=status.HTTP_200_OK)
+    
+class RecordlikeViewSet(viewsets.ModelViewSet):
+    queryset=Record.objects.all()
+    serializer_class = RecordSerializer
+    
+    
+    def likes(self,request,pk):
+        # print(request)
+        # print(pk)
+        member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+        if member:
+            record = get_object_or_404(Record,pk=pk)
+            
+            if record.like_user.filter(pk=member.pk).exists():
+                record.like_user.remove(member)
+                return Response({'response':'좋아요 삭제!'},status=status.HTTP_200_OK)
+            else:
+                record.like_user.add(member)
+                return Response({'response':'좋아요 추가!'},status=status.HTTP_200_OK)
+        else:
+            return Response({'response':'로그인을 해주세요'})

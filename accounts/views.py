@@ -2,6 +2,7 @@ from ast import arg
 import stat
 import re
 import bcrypt
+from .pagination import RankingPagination
 from telnetlib import STATUS
 from urllib.request import install_opener
 from xmlrpc.client import ResponseError
@@ -9,12 +10,14 @@ from django.shortcuts import get_object_or_404, render
 from .models import Member, Follow
 from exercise.models import Routine
 from record.models import Record
-from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer, MemberSearchByNicknameSerializer, MemberUpdateReadmeSerializer, MemberUploadProfileImageSerializer, MemberGetTokenSerializer
+from .serializers import MemberSerializer, MemberCheckSerializer, FollowSerializer, MemberSearchByNicknameSerializer, MemberUpdateReadmeSerializer, MemberUploadProfileImageSerializer, MemberGetTokenSerializer,MemberRankingeSerializer
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import filters
 from rest_framework.response import Response
 import secrets
 import json
+import datetime
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
@@ -367,3 +370,77 @@ class MemberSearchByKeyword(viewsets.ModelViewSet):
             
         except Exception as e:
             return Response({'response' : False}, status.HTTP_400_BAD_REQUEST)
+
+#랭킹(멤버 리스트 정렬):
+class MemberRankingViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberRankingeSerializer
+    pagination_class = RankingPagination
+    filter_backends = [filters.OrderingFilter] 
+    # ordering_fields = ['-level','-record_day'] 
+    ordering = ['-level','-record_day']
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     # print(serializer.data)
+    #     return Response(serializer.data)
+
+def check():
+    #모든 멤버에 대해서
+    memberlist = Member.objects.all()
+    print(memberlist)
+    for mem_obj in memberlist:
+        records = Record.objects.filter(member_id=mem_obj.id)
+        recordTimeList = []
+        for record in records:
+            recordTimeList.append(record.create_time.strftime('%Y/%m/%d'))
+
+        #파도 레벨
+        print(recordTimeList)
+        continue_day = 0
+        decreaseCount = 0
+        wave_level = 0
+        for i in range (29,-1,-1):
+            tempdate = datetime.date.today()-datetime.timedelta(days=i)
+            tempdate = tempdate.strftime('%Y/%m/%d')
+            # print("tempdate:",tempdate)
+
+            if(recordTimeList):
+                if tempdate in recordTimeList:
+                    if continue_day < 3:continue_day+=1
+                    decreaseCount=0
+                    wave_level+=1
+                else:
+                    continue_day = 0
+                    decreaseCount +=1
+                    if decreaseCount >= 7:
+                        if wave_level >0: 
+                            wave_level -1
+                        decreaseCount = 0
+
+        # print("wave_level",wave_level)
+        mem_obj.level = wave_level
+
+        #연속일수 구하기
+        record_day = 0
+        idx = 0
+        while True:
+            tempdate = datetime.date.today()-datetime.timedelta(days=idx)#오늘부터 하루씩 뒤로
+            tempdate = tempdate.strftime('%Y/%m/%d')
+            if tempdate in recordTimeList:
+                record_day +=1
+                idx +=1
+            else:
+                break
+        # print("record_day",record_day)
+        mem_obj.record_day = record_day
+        mem_obj.save()
+
+    print("동작 완료")
