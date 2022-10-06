@@ -154,3 +154,24 @@ class RecordRoutineViewSet(viewsets.ModelViewSet):
             recordData['time'] = record.create_time.strftime('%Y/%m/%d-%H:%M:%S')
             result.append(recordData)
         return Response(result,status=status.HTTP_200_OK)
+    
+class RecordlikeViewSet(viewsets.ModelViewSet):
+    queryset=Record.objects.all()
+    serializer_class = RecordSerializer
+    
+    
+    def likes(self,request,pk):
+        # print(request)
+        # print(pk)
+        member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+        if member:
+            record = get_object_or_404(Record,pk=pk)
+            
+            if record.like_user.filter(pk=member.pk).exists():
+                record.like_user.remove(member)
+                return Response({'response':'좋아요 삭제!'},status=status.HTTP_200_OK)
+            else:
+                record.like_user.add(member)
+                return Response({'response':'좋아요 추가!'},status=status.HTTP_200_OK)
+        else:
+            return Response({'response':'로그인을 해주세요'})

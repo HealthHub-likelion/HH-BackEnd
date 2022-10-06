@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet
+from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet,RecordlikeViewSet
 from django.conf.urls.static import static
 
 
@@ -30,11 +30,16 @@ recordByRoutine = RecordRoutineViewSet.as_view({
     'get':'view_routineByRecord'
 })
 
+record_likes = RecordlikeViewSet.as_view({
+    'post':'likes'
+})
+
 urlpatterns =[
     path('',record),
     # path('img/',record_image),
     path('mylist/',record_list),
     path('followinglist/',record_list2),
     path('<int:pk>/',record_detail),
+    path('<int:pk>/likes/',record_likes),
     path('routines',recordByRoutine)
 ]
