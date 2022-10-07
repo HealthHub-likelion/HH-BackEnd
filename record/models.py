@@ -11,3 +11,20 @@ class Record(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='기록 작성 시간')
+
+
+class Comments(models.Model):
+    id = models.AutoField(primary_key=True)
+    record_id = models.ForeignKey("record.Record", related_name="record_comments", on_delete=models.CASCADE, db_column="record_id")
+    member_id = models.ForeignKey("accounts.Member", related_name="comment_member", on_delete=models.CASCADE, db_column="member_id")
+    member_nickname = models.CharField(default='', max_length=150, null=False)
+    comment = models.TextField()
+    create_time = models.DateTimeField(auto_now_add=True,verbose_name='댓글 작성 시간')
+    
+class ReplyComment(models.Model):
+    id = models.AutoField(primary_key=True)
+    comment_id = models.ForeignKey("record.Comments", related_name="reply_comment_comment", on_delete=models.CASCADE, db_column="comment_id")
+    member_id = models.ForeignKey("accounts.Member", related_name="reply_comment_member", on_delete=models.CASCADE, db_column="member_id")
+    member_nickname = models.CharField(default='', max_length=150, null=False)
+    comment = models.TextField()
+    create_time = models.DateTimeField(auto_now_add=True,verbose_name='댓글 작성 시간')

@@ -3,9 +3,9 @@ from django.shortcuts import render,get_object_or_404
 from itsdangerous import Serializer
 
 from exercise.models import Routine, RoutineExercise, Set
-from .models import Record
+from .models import Record, Comments, ReplyComment
 from accounts.models import Member,Follow
-from .serializers import RecordSerializer,MemberForRecordSerializer
+from .serializers import CommentSerializer, RecordSerializer, MemberForRecordSerializer, ReplyCommentSerializer
 import json
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -104,6 +104,38 @@ class ymRecordViewSet(viewsets.ModelViewSet):
     #연속일수 갱신
     def record_day_update():
         return
+    
+    def retrieve(self, request, pk=None):
+        queryset = Record.objects.all()
+        record = get_object_or_404(queryset, pk=pk)
+        print('1')
+        comments = Comments.objects.filter(record_id = record) #배열 생성
+        response_json = {
+                "record_id" : pk,
+                "member_id" : record.member_id.id,
+                "create_time" : record.create_time,
+                "routine_id" : record.routine_id.id,
+                "start_time" : record.start_time,
+                "end_time" : record.end_time,
+                "comment" : record.comment,
+                "img" : str(record.img),
+                "like_user" : record.like_user.all().values("id"),
+                "comment_list" : []
+            }
+        
+        for comment in comments:
+            print(comment)
+            comment_serializer = CommentSerializer(comment)
+            reply_comments = ReplyComment.objects.filter(comment_id = comment)
+            comment_json = {"comment_id" : comment.id, "member_id" : comment.member_id.id, "comment" : comment.comment, "member_nickname" : comment.member_nickname, "create_time" : comment.create_time, "reply_comment_list" : []}
+            response_json["comment_list"].append(comment_json)
+            for reply_comment in reply_comments:
+                reply_comment_serializer = ReplyCommentSerializer(reply_comment)
+                comment_json["reply_comment_list"].append({"reply_comment_id" : reply_comment.id, "comment_id" : reply_comment.comment_id.id, "comment" : reply_comment.comment, "member_id" : reply_comment.member_id.id, "nickname" : reply_comment.member_nickname})
+        
+        print(comments)
+        serializer = RecordSerializer(record)
+        return Response(response_json, status=status.HTTP_200_OK)
 
     
 class ymMyRecordListViewSet(viewsets.ModelViewSet):
@@ -237,3 +269,104 @@ class RecordlikeViewSet(viewsets.ModelViewSet):
                 return Response({'response':'좋아요 추가!'},status=status.HTTP_200_OK)
         else:
             return Response({'response':'로그인을 해주세요'})
+        
+class CommentViewset(viewsets.ModelViewSet):
+    def get_record(self, record_id):
+        record = Record.objects.get(pk = record_id)
+        return record
+    def create_comment(self, request):
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            now_time = datetime.datetime.now()
+            comment = Comments()
+            comment.member_nickname = member.nickname
+            comment.create_time = now_time
+            comment.comment = request.data['comment']
+            comment.member_id = member
+            comment.record_id = self.get_record(int(request.data['record_id']))
+            print(self.get_record(int(request.data['record_id'])))
+            comment.save()
+            
+            return Response({'response':True},status=status.HTTP_200_OK)
+        except Exception as e:
+            print("    ",e)
+            return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+    
+    def update_comment(self, request):
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            comment = Comments.objects.get(id = request.data['comment_id'])
+            if(comment.member_id == member):
+                comment.comment = request.data['comment']
+            else:
+                return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            print(e)
+            return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+    def delete_comment(self, request):
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            comment = Comments.objects.get(id = request.data['comment_id'])
+            if(comment.member_id == member):
+                comment.delete()
+            else:
+                return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            print(e)
+            return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+class ReplyCommentViewSet(viewsets.ModelViewSet):
+    
+    def get_comment(self, comment_id):
+        comment = Comments.objects.get(id = comment_id)
+        return comment
+    def create_reply_comment(self, request):
+        '''request : [token, comment_id, comment]'''
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            now_time = datetime.datetime.now()
+
+            reply_comment = ReplyComment()
+            comment = self.get_comment(request.data['comment_id'])
+            reply_comment.member_nickname = member.nickname
+            reply_comment.create_time = now_time
+            reply_comment.comment = request.data['comment']
+            reply_comment.member_id = member
+            reply_comment.comment_id = comment
+            print(request.data['comment_id'])
+            print(type(request.data['comment_id']))
+            reply_comment.save()
+            
+            return Response({'response':True},status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'response':False},status.HTTP_400_BAD_REQUEST)
+    
+    def update_comment(self, request):
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            reply_comment = ReplyComment.objects.get(id = request.data['reply_comment_id'])
+            if(reply_comment.member_id == member):
+                reply_comment.comment = request.data['comment']
+            else:
+                return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            print(e)
+            return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+    def delete_comment(self, request):
+        try:
+            member = Member.objects.get(token = request.META.get('HTTP_AUTHORIZATION'))
+            reply_comment = ReplyComment.objects.get(id = request.data['reply_comment_id'])
+            if(reply_comment.member_id == member):
+                reply_comment.delete()
+            else:
+                return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            print(e)
+            return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)

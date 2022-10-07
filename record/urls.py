@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet,RecordlikeViewSet
+from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet, CommentViewset, ReplyCommentViewSet
 from django.conf.urls.static import static
 
 
@@ -11,9 +11,11 @@ record = ymRecordViewSet.as_view({
     'post': 'create',
 })
 
-#기록 수정=>(이미지 업로드)
+#기록 수정=>(이미지 업로드) /삭제
+#삭제 -> routine count 빼주기 todo
 record_detail = ymRecordViewSet.as_view({
     'get':'retrieve',
+    'delete': 'destroy',
     'post': 'partial_update'
 })
 
@@ -30,8 +32,16 @@ recordByRoutine = RecordRoutineViewSet.as_view({
     'get':'view_routineByRecord'
 })
 
-record_likes = RecordlikeViewSet.as_view({
-    'post':'likes'
+commentByrecord = CommentViewset.as_view({
+    'post' : 'create_comment',
+    'delete' : 'delete_comment',
+    'put' : 'update_comment'
+})
+
+replycommentByrecord = ReplyCommentViewSet.as_view({
+    'post' : 'create_reply_comment',
+    'delete' : 'delete_comment',
+    'put' : 'update_comment'
 })
 
 urlpatterns =[
@@ -40,6 +50,7 @@ urlpatterns =[
     path('mylist/',record_list),
     path('followinglist/',record_list2),
     path('<int:pk>/',record_detail),
-    path('<int:pk>/likes/',record_likes),
-    path('routines',recordByRoutine)
+    path('routines',recordByRoutine),
+    path('comment/', commentByrecord),
+    path('reply_comment/', replycommentByrecord)
 ]
