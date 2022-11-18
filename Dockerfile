@@ -13,4 +13,5 @@ EXPOSE 8000
 
 # gunicorn 배포 명령어
 # CMD ["gunicorn", "--bind", "허용하는 IP:열어줄 포트", "project.wsgi:application"]
-CMD ["python", "manage.py","runsslserver","--certificate","django.crt","--key","django.key","0.0.0.0:8000"]
+#CMD ["python", "manage.py","runsslserver","--certificate","django.crt","--key","django.key","0.0.0.0:8000"]
+CMD ["python", "manage.py","runserver","0.0.0.0:8000"]
