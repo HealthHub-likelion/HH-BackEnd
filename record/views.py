@@ -376,14 +376,35 @@ class RecordlikeAllViewSet(viewsets.ViewSet):
     def get_record(self,request):
         records = Record.objects.all()
         records = records.order_by('-like_user')
+        filter_record = []
         result = []
 
         for record in records:
-            if record in result:
+            if record in filter_record:
                 continue
-            result.append(record)
+            filter_record.append(record)
 
-        serializer = RecordSerializer(result[:10], many=True)
+        serializer = RecordSerializer(filter_record[:10], many=True)
         data = serializer.data
-        return Response({'respones' : data})
+        for record in data:
+            tmp = {}
+            tmp['record_id'] = record['id']
+            tmp['record_comment'] = record['comment']
+            tmp['record_img'] = record['img']
+            tmp['record_start_time'] = record['start_time']
+            tmp['record_end_time'] = record['end_time']
+            tmp['record_create_time'] = record['create_time']
+            routine = Routine.objects.get(id = record['routine_id'])
+            tmp['routine_id'] = routine.id
+            tmp['routine_name'] = routine.routineName
+            tmp['routine_isOpen'] = routine.isOpen
+            member = Member.objects.get(id = record['member_id'])
+            tmp['member_id'] = member.id
+            tmp['member_nickname'] = member.nickname
+            tmp['member_img'] = member.img.url
+            tmp['member_isOpen'] = member.isOpen
+            result.append(tmp)
+
+
+        return Response(result)
         
