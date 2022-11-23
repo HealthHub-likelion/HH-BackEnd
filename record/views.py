@@ -269,7 +269,7 @@ class RecordlikeViewSet(viewsets.ModelViewSet):
                 return Response({'response':'좋아요 추가!'},status=status.HTTP_200_OK)
         else:
             return Response({'response':'로그인을 해주세요'})
-        
+
 class CommentViewset(viewsets.ModelViewSet):
     def get_record(self, record_id):
         record = Record.objects.get(pk = record_id)
@@ -370,3 +370,20 @@ class ReplyCommentViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'respones' : False}, status.HTTP_400_BAD_REQUEST)
+
+class RecordlikeAllViewSet(viewsets.ViewSet):
+
+    def get_record(self,request):
+        records = Record.objects.all()
+        records = records.order_by('-like_user')
+        result = []
+
+        for record in records:
+            if record in result:
+                continue
+            result.append(record)
+
+        serializer = RecordSerializer(result[:10], many=True)
+        data = serializer.data
+        return Response({'respones' : data})
+        

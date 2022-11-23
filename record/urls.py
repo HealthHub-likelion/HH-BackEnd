@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
-from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet, CommentViewset, ReplyCommentViewSet,RecordlikeViewSet
+from .views import ymRecordViewSet,ymMyRecordListViewSet,ymFollowingRecordListViewSet,RecordRoutineViewSet, CommentViewset, ReplyCommentViewSet,RecordlikeViewSet,RecordlikeAllViewSet
 from django.conf.urls.static import static
 
 
@@ -42,6 +42,10 @@ recordLike = RecordlikeViewSet.as_view({
     'post' : 'likes'
 })
 
+recordByLike = RecordlikeAllViewSet.as_view({
+    'get' : 'get_record'
+})
+
 replycommentByrecord = ReplyCommentViewSet.as_view({
     'post' : 'create_reply_comment',
     'delete' : 'delete_comment',
@@ -55,6 +59,7 @@ urlpatterns =[
     path('followinglist/',record_list2),
     path('<int:pk>/',record_detail),
     path('<int:pk>/likes/',recordLike),
+    path('records/',recordByLike),
     path('routines',recordByRoutine),
     path('comment/', commentByrecord),
     path('reply_comment/', replycommentByrecord)
