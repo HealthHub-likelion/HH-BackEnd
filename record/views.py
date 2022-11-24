@@ -168,6 +168,7 @@ class ymMyRecordListViewSet(viewsets.ModelViewSet):
                 record_one["record_start_time"] = record_member["start_time"]
                 record_one["record_end_time"] = record_member["end_time"]
                 record_one["record_create_time"] = record_member["create_time"]
+                record_one["record_like_user"] = record_member["like_user"]
 
                 record_one["routine_id"] = routine_id
                 record_one["routine_name"] = routine_name
@@ -215,6 +216,7 @@ class ymFollowingRecordListViewSet(viewsets.ModelViewSet):
                 record_one["record_start_time"] = record_member["start_time"]
                 record_one["record_end_time"] = record_member["end_time"]
                 record_one["record_create_time"] = record_member["create_time"]
+                record_one["record_like_user"] = record_member["like_user"]
 
                 record_one["routine_id"] = routine_id
                 record_one["routine_name"] = routine_name
